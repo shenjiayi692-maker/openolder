@@ -11,5 +11,5 @@ Owner: Jiayi (reply in Chinese, plain language; she is not a developer). Sister 
 - Before pushing: `npm test` and `npm run build && node scripts/smoke-browser.cjs` must pass.
 
 ## Status
-Premiere full version built (7 SEO pages from `src/pages.json` + `src/template.html`; single, batch, Production folder/zip) but **not yet verified in real Premiere** — do not promote until Jiayi's real-machine test (`docs/TEST-CHECKLIST.zh.md`) passes. Ableton beta page (`/ableton-12-to-11/`) tested only with a synthetic set.
+Premiere full version built (7 SEO pages from `src/pages.json` + `src/template.html`; single, batch, Production folder/zip) and **verified by Jiayi in real Premiere 2026 -> 2025 on 2026-11-04 (T1–T4 all opened, nothing missing)**. Next: buy openolder.com, switch to NOINDEX=0 + SITE_URL, submit to Search Console/Bing, then promote. Ableton beta page (`/ableton-12-to-11/`) tested only with a synthetic set.
 Tests: `npm test`; `npm run build && node scripts/smoke-browser.cjs && node scripts/smoke-ableton.cjs` (use `PORT=` if busy, `BASE_URL=` for the live site). Deploy: Cloudflare Pages project `openolder`, auto-deploys branch `demo-v0.1`; `SITE_URL`/`NOINDEX=0` only at real launch.
