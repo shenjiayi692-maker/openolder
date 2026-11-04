@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!--ROBOTS-->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open an Ableton Live 12 Set in Live 11 (Free, Beta) | OpenOlder</title>
+<meta name="description" content="See what's inside an Ableton Live set (tempo, tracks, plug-ins) and convert a Live 12 set so Live 11 can open it. Free, runs in your browser, nothing uploaded.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header class="topbar"><div class="wrap topbar-in">
+  <a class="brand" href="/"><img src="/favicon.svg" alt="" width="22" height="22">OpenOlder</a>
+  <nav class="topnav"><a href="/">Premiere Pro</a><a href="/ableton-12-to-11/">Ableton Live</a><a href="/licenses/">Licenses</a></nav>
+</div></header>
+
+<section class="hero"><div class="wrap">
+  <h1>Ableton Live 12 to 11 <span class="beta">Beta</span></h1>
+  <p class="subtitle">Check what's inside a Live set, and convert a Live 12 set so Live 11 can open it. Free, and your set stays on your computer.</p>
+  <div class="tool">
+    <div class="convert-row"><span class="pill">Live 12 .als</span><span class="arrow" aria-hidden="true">→</span><span class="pill">Live 11</span></div>
+    <div id="drop" class="drop" tabindex="0" role="button" aria-label="Choose an .als file">
+      <span class="btn-choose">Choose set</span>
+      <span class="drop-hint">or drop an .als file here</span>
+      <span class="drop-meta">Your original set is not changed. Samples are not needed.</span>
+      <input id="file" type="file" accept=".als" hidden>
+    </div>
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+    <div id="result" hidden>
+      <div id="report" class="table-wrap"></div>
+      <div class="actions"><button id="convert" type="button" class="btn-primary">Convert to Live 11 &amp; download</button></div>
+    </div>
+  </div>
+  <ul class="trust"><li>Files stay on your device</li><li>No sign-up</li><li>Free</li></ul>
+</div></section>
+
+<main class="wrap content">
+  <section>
+    <h2>Before you convert</h2>
+    <ul class="steps">
+      <li>This converter is in beta. Keep your original set and check the converted one in Live 11 before you rely on it.</li>
+      <li>Devices that only exist in Live 12 (for example Roar and Meld) are removed. Freeze and flatten those tracks in Live 12 first to keep their sound.</li>
+      <li>MIDI take lanes, tuning systems and some Live 12 view settings are dropped, because Live 11 has no place for them.</li>
+      <li>Copy your samples along with the set, or use Collect All and Save in Live 12 first.</li>
+    </ul>
+  </section>
+  <section>
+    <h2>Credits</h2>
+    <p>The Live 12 to 11 conversion rules come from <a href="https://github.com/mslinn/live_set">live_set</a> by Michael Slinn, used under the Live Set Tools Noncommercial License 1.0. This page is free and non-commercial. <a href="/licenses/">License details</a>.</p>
+  </section>
+</main>
+
+<footer class="footer"><div class="wrap footer-in">
+  <div><a class="brand" href="/"><img src="/favicon.svg" alt="" width="20" height="20">OpenOlder</a></div>
+  <div class="footer-links"><a href="/licenses/">Open-source licenses</a></div>
+</div><div class="wrap"><p class="small muted legal">OpenOlder is an independent tool, not affiliated with or endorsed by Ableton. Ableton and Live are trademarks of Ableton AG.</p></div></footer>
+<script src="/app-als.js" defer></script>
+</body>
+</html>

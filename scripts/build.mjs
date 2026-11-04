@@ -9,9 +9,11 @@ fs.cpSync(path.join(root, 'src'), dist, { recursive: true });
 fs.cpSync(path.join(root, 'public'), dist, { recursive: true });
 fs.mkdirSync(path.join(dist, 'vendor'), { recursive: true });
 fs.copyFileSync(path.join(root, 'node_modules/fflate/esm/browser.js'), path.join(dist, 'vendor/fflate.js'));
-const lib = path.join(dist, 'lib/prproj.js');
-fs.writeFileSync(lib, fs.readFileSync(lib, 'utf8').replace("from 'fflate'", "from '../vendor/fflate.js'"));
-for (const f of ['index.html', 'licenses/index.html']) {
+for (const f of ['lib/prproj.js', 'lib/als.js']) {
+  const lib = path.join(dist, f);
+  fs.writeFileSync(lib, fs.readFileSync(lib, 'utf8').replace("from 'fflate'", "from '../vendor/fflate.js'"));
+}
+for (const f of ['index.html', 'licenses/index.html', 'ableton-12-to-11/index.html']) {
   const p = path.join(dist, f);
   fs.writeFileSync(p, fs.readFileSync(p, 'utf8').replace('<!--ROBOTS-->', NOINDEX ? '<meta name="robots" content="noindex, nofollow">' : ''));
 }
