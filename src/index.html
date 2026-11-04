@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!--ROBOTS-->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Premiere Pro Project Downgrader: Open 2026 Projects in 2025 | OpenOlder</title>
+<meta name="description" content="Downgrade a Premiere Pro project so an older version can open it, including Premiere Pro 2026 projects. Runs in your browser; your project is never uploaded.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header class="topbar"><div class="wrap topbar-in">
+  <a class="brand" href="/"><img src="/favicon.svg" alt="" width="22" height="22">OpenOlder</a>
+  <nav class="topnav"><a href="/">Premiere Pro</a><a href="/licenses/">Licenses</a></nav>
+</div></header>
+
+<section class="hero"><div class="wrap">
+  <h1>Premiere Pro Project Downgrader</h1>
+  <p class="subtitle">Open a Premiere Pro 2026 project in 2025 or older. Your project file stays on your computer.</p>
+  <div class="tool">
+    <div class="convert-row">
+      <span class="pill">.prproj</span><span class="arrow" aria-hidden="true">→</span><span class="pill">older Premiere</span>
+    </div>
+    <div id="drop" class="drop" tabindex="0" role="button" aria-label="Choose a .prproj file">
+      <span class="btn-choose">Choose project</span>
+      <span class="drop-hint">or drop a .prproj file here</span>
+      <span class="drop-meta">Your original file is not changed. A new copy is downloaded.</span>
+      <input id="file" type="file" accept=".prproj" hidden>
+    </div>
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+    <div id="result" hidden>
+      <p id="fileinfo" class="fileinfo"></p>
+      <div class="actions">
+        <label for="target" class="muted">Open in</label>
+        <select id="target" class="pill-select"></select>
+        <button id="convert" type="button" class="btn-primary">Convert &amp; download</button>
+      </div>
+    </div>
+  </div>
+  <ul class="trust"><li>Files stay on your device</li><li>No sign-up</li><li>Free</li></ul>
+</div></section>
+
+<main class="wrap content">
+  <section>
+    <h2>Why 2026 projects need more than a version change</h2>
+    <p>The old trick was to unzip the .prproj, lower the version number and zip it again. Premiere Pro 2026 saves projects in a more compact form that leaves out fields older versions require, so that trick now gives a "project is damaged" error. This tool adds those fields back and then sets the version.</p>
+  </section>
+  <section>
+    <h2>What to expect</h2>
+    <ul class="steps">
+      <li>Your timeline, clips, cuts and most effects come across.</li>
+      <li>Features that only exist in the newer version (for example new masks or the new text tool) will not appear.</li>
+      <li>Always keep the original project and check the result before you deliver work.</li>
+    </ul>
+  </section>
+</main>
+
+<footer class="footer"><div class="wrap footer-in">
+  <div><a class="brand" href="/"><img src="/favicon.svg" alt="" width="20" height="20">OpenOlder</a></div>
+  <div class="footer-links"><a href="/licenses/">Open-source licenses</a></div>
+</div><div class="wrap"><p class="small muted legal">OpenOlder is an independent tool, not affiliated with or endorsed by Adobe. Adobe and Premiere Pro are trademarks of Adobe. Conversion logic based on prem-down by Luis Gómez Gutiérrez (MIT).</p></div></footer>
+<script src="/app.js" defer></script>
+</body>
+</html>
