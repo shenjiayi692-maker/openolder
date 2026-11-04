@@ -9,6 +9,6 @@ Browser tools that let older software open newer project files. First tool: **Pr
 - `scripts/smoke-browser.cjs`: headless Chromium end-to-end test (`npm run build && node scripts/smoke-browser.cjs`).
 
 Build: `npm run build` → `dist/` (noindex preview by default; `NOINDEX=0` for the real launch).
-Status: **demo** — waiting for a real-machine test in Premiere Pro (see `docs/TEST-CHECKLIST.zh.md`).
+Status: Premiere full version (single, batch, Productions; 7 landing pages) — waiting for a real-machine test in Premiere Pro (see `docs/TEST-CHECKLIST.zh.md`). Ableton page is beta.
 
 Not affiliated with Adobe. Premiere Pro is a trademark of Adobe.

@@ -1,21 +1,72 @@
 // Builds the static site into dist/. Preview builds are noindex unless NOINDEX=0.
+// SITE_URL sets canonical links and the sitemap (default https://openolder.pages.dev).
 import fs from 'node:fs';
 import path from 'node:path';
+
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const dist = path.join(root, 'dist');
+const src = path.join(root, 'src');
 const NOINDEX = process.env.NOINDEX !== '0';
+const SITE = (process.env.SITE_URL || 'https://openolder.pages.dev').replace(/\/$/, '');
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const url = (slug) => `${SITE}/${slug ? slug + '/' : ''}`;
+const ROBOTS = NOINDEX ? '<meta name="robots" content="noindex, nofollow">' : '';
+
 fs.rmSync(dist, { recursive: true, force: true });
-fs.cpSync(path.join(root, 'src'), dist, { recursive: true });
+fs.cpSync(src, dist, { recursive: true, filter: (p) => !/(template\.html|pages\.json)$/.test(p) });
 fs.cpSync(path.join(root, 'public'), dist, { recursive: true });
 fs.mkdirSync(path.join(dist, 'vendor'), { recursive: true });
 fs.copyFileSync(path.join(root, 'node_modules/fflate/esm/browser.js'), path.join(dist, 'vendor/fflate.js'));
 for (const f of ['lib/prproj.js', 'lib/als.js']) {
-  const lib = path.join(dist, f);
-  fs.writeFileSync(lib, fs.readFileSync(lib, 'utf8').replace("from 'fflate'", "from '../vendor/fflate.js'"));
-}
-for (const f of ['index.html', 'licenses/index.html', 'ableton-12-to-11/index.html']) {
   const p = path.join(dist, f);
-  fs.writeFileSync(p, fs.readFileSync(p, 'utf8').replace('<!--ROBOTS-->', NOINDEX ? '<meta name="robots" content="noindex, nofollow">' : ''));
+  fs.writeFileSync(p, fs.readFileSync(p, 'utf8').replace("from 'fflate'", "from '../vendor/fflate.js'"));
 }
-fs.writeFileSync(path.join(dist, 'robots.txt'), NOINDEX ? 'User-agent: *\nDisallow: /\n' : 'User-agent: *\nAllow: /\n');
-console.log(`Built dist/${NOINDEX ? ' (noindex preview)' : ''}`);
+
+// Premiere pages from the template
+const pages = JSON.parse(fs.readFileSync(path.join(src, 'pages.json'), 'utf8'));
+const tpl = fs.readFileSync(path.join(src, 'template.html'), 'utf8');
+for (const p of pages) {
+  const faq = p.faq.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('\n');
+  const steps = p.steps.map((s) => `<li>${esc(s)}</li>`).join('');
+  const related = [...pages.filter((o) => o.slug !== p.slug).map((o) => [o.slug ? `/${o.slug}/` : '/', o.h1.replace(/"/g, '')]), ['/ableton-12-to-11/', 'Ableton Live 12 to 11']]
+    .map(([href, t]) => `<a href="${href}">${esc(t)}</a>`).join('');
+  let compare = '';
+  if (p.compare) {
+    const [head, ...rows] = p.compare;
+    compare = `<section><h2>Comparison</h2><div class="table-wrap"><table class="spec compare"><thead><tr>${head.map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map((r) => `<tr>${r.map((c, i) => (i ? `<td>${esc(c)}</td>` : `<th>${esc(c)}</th>`)).join('')}</tr>`).join('')}</tbody></table></div></section>`;
+  }
+  const jsonld = JSON.stringify([
+    { '@context': 'https://schema.org', '@type': 'SoftwareApplication', name: 'OpenOlder Premiere Pro Project Downgrader', applicationCategory: 'UtilitiesApplication', operatingSystem: 'Any (web browser)', url: url(p.slug), description: p.description, offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' } },
+    { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: p.faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) },
+    { '@context': 'https://schema.org', '@type': 'HowTo', name: p.h1, step: p.steps.map((s, i) => ({ '@type': 'HowToStep', position: i + 1, text: s })) },
+  ]).replace(/</g, '\\u003c');
+  const html = tpl
+    .replace('<!--ROBOTS-->', ROBOTS)
+    .replaceAll('{{title}}', esc(p.title))
+    .replaceAll('{{description}}', esc(p.description))
+    .replace('{{canonical}}', url(p.slug))
+    .replace('{{jsonld}}', jsonld)
+    .replace('{{h1}}', esc(p.h1))
+    .replace('{{subtitle}}', esc(p.subtitle))
+    .replace('{{lead}}', esc(p.lead))
+    .replace('{{steps}}', steps)
+    .replace('{{compare}}', compare)
+    .replace('{{faq}}', faq)
+    .replace('{{related}}', related)
+    .replace('{{config}}', JSON.stringify({ defaultTarget: p.defaultTarget }));
+  fs.mkdirSync(path.join(dist, p.slug), { recursive: true });
+  fs.writeFileSync(path.join(dist, p.slug, 'index.html'), html);
+}
+
+for (const f of ['licenses/index.html', 'ableton-12-to-11/index.html']) {
+  const p = path.join(dist, f);
+  fs.writeFileSync(p, fs.readFileSync(p, 'utf8').replace('<!--ROBOTS-->', ROBOTS));
+}
+
+const slugs = [...pages.map((p) => p.slug), 'ableton-12-to-11'];
+const today = new Date().toISOString().slice(0, 10);
+fs.writeFileSync(path.join(dist, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${slugs.map((s) => `  <url><loc>${url(s)}</loc><lastmod>${today}</lastmod></url>`).join('\n')}\n</urlset>\n`);
+fs.writeFileSync(path.join(dist, 'robots.txt'), NOINDEX ? 'User-agent: *\nDisallow: /\n' : `User-agent: *\nAllow: /\n\nSitemap: ${SITE}/sitemap.xml\n`);
+fs.writeFileSync(path.join(dist, 'llms.txt'), `# OpenOlder\n\n> Free browser tools that let older software open newer project files. Files are processed in the browser and never uploaded.\n\n## Premiere Pro\n${pages.map((p) => `- [${p.h1.replace(/"/g, '')}](${url(p.slug)}): ${p.description}`).join('\n')}\n\n## Ableton Live\n- [Ableton Live 12 to 11 (beta)](${url('ableton-12-to-11')}): inspect a Live set and convert a Live 12 set for Live 11.\n`);
+fs.writeFileSync(path.join(dist, '404.html'), fs.readFileSync(path.join(dist, 'index.html'), 'utf8'));
+console.log(`Built ${pages.length + 2} pages into dist/ for ${SITE}${NOINDEX ? ' (noindex preview)' : ''}`);

@@ -236,3 +236,116 @@ export function downgrade(bytes, targetVersion) {
   verify(xml, target, reinsert);
   return { bytes: gzipSync(strToU8(xml), { level: 9 }), sourceVersion, targetVersion: target, inserted, unrecognised };
 }
+
+// ---------------------------------------------------------------------------
+// Productions (prem-down production.go)
+// A Production is a folder with exactly one .prodset (JSON) plus any number of
+// .prproj files. Every project is downgraded, everything else copied as-is, and
+// the .prodset is renamed to match the new folder name.
+// ---------------------------------------------------------------------------
+export const FIRST_PRODUCTION_VERSION = 38; // Premiere 2020.1, April 2020
+const FIRST_UTF8_PRODSET_VERSION = 45;      // 2026 writes UTF-8, 2025 and older UTF-16LE
+const PRODSET_VERSION_RE = /("mProjectVersion"\s*:\s*)(\d+)/g;
+const PRODSET_MINCOMPAT_RE = /("mMinCompatibleProjectVersion"\s*:\s*)(\d+)/g;
+
+function decodeProdset(raw) {
+  let b = raw;
+  if (b.length >= 2 && b[0] === 0x1f && b[1] === 0x8b) b = gunzipSync(b);
+  let utf16 = false;
+  if (b.length >= 2 && b[0] === 0xff && b[1] === 0xfe) { b = b.subarray(2); utf16 = true; }
+  else if (b.length >= 2 && b[0] === 0x7b && b[1] === 0) utf16 = true;
+  if (!utf16) return strFromU8(b);
+  if (b.length % 2) throw new DowngradeError('prodset', 'The Production settings file is damaged (UTF-16 ends mid-character).');
+  return new TextDecoder('utf-16le').decode(b);
+}
+
+function encodeProdset(js, version) {
+  if (version >= FIRST_UTF8_PRODSET_VERSION) return strToU8(js);
+  const out = new Uint8Array(js.length * 2); // no BOM, like Adobe
+  for (let i = 0; i < js.length; i++) { const c = js.charCodeAt(i); out[2 * i] = c & 0xff; out[2 * i + 1] = c >> 8; }
+  return out;
+}
+
+function parseProdset(js) {
+  let v;
+  try { v = JSON.parse(js); } catch (_) { throw new DowngradeError('prodset', 'This does not look like a Production settings file (.prodset).'); }
+  if (typeof v.mProjectVersion !== 'number') throw new DowngradeError('prodset', 'The Production settings file has no project version.');
+  return { project: v.mProjectVersion, minCompatible: typeof v.mMinCompatibleProjectVersion === 'number' ? v.mMinCompatibleProjectVersion : null };
+}
+
+function setProdsetKey(js, re, name, value) {
+  const n = (js.match(re) || []).length;
+  if (n !== 1) throw new DowngradeError('prodset', `Expected exactly one "${name}" key, found ${n}.`);
+  return js.replace(re, (_, a) => `${a}${value}`);
+}
+
+export function prodsetVersion(bytes) { return parseProdset(decodeProdset(bytes)).project; }
+
+export function downgradeProdset(bytes, target) {
+  let js = decodeProdset(bytes);
+  const v = parseProdset(js);
+  if (target >= v.project) throw new DowngradeError('not-older', 'This Production is not newer than the version you picked.');
+  if (target < FIRST_PRODUCTION_VERSION) throw new DowngradeError('production-too-old', 'Productions only exist since Premiere Pro 2020 (April 2020). Pick 2020.1 or newer.');
+  js = setProdsetKey(js, PRODSET_VERSION_RE, 'mProjectVersion', target);
+  if (v.minCompatible !== null && v.minCompatible > target) js = setProdsetKey(js, PRODSET_MINCOMPAT_RE, 'mMinCompatibleProjectVersion', target);
+  const out = encodeProdset(js, target);
+  const check = parseProdset(decodeProdset(out));
+  if (check.project !== target || (check.minCompatible !== null && check.minCompatible > target)) {
+    throw new DowngradeError('verify', 'Production settings check failed.');
+  }
+  return out;
+}
+
+/**
+ * Downgrade a Production folder.
+ * @param {{path:string, bytes:Uint8Array}[]} files - paths relative to the Production folder's parent ("MyProd/MyProd.prodset", ...)
+ * @param {number} [target] - default: one release below the Production's version
+ * @returns {{files:{path:string, bytes:Uint8Array}[], folder:string, targetVersion:number, projects:number, copied:number, errors:{path:string, error:string}[]}}
+ */
+export function downgradeProduction(files, target) {
+  const prodsets = files.filter((f) => /\.prodset$/i.test(f.path));
+  if (prodsets.length !== 1) {
+    throw new DowngradeError('not-production', prodsets.length
+      ? `Found ${prodsets.length} .prodset files; a Production has exactly one.`
+      : 'This folder is not a Premiere Production (no .prodset file).');
+  }
+  const ps = prodsets[0];
+  const parts = ps.path.split('/');
+  const folder = parts.length > 1 ? parts[0] : ps.path.replace(/\.prodset$/i, '');
+  const source = prodsetVersion(ps.bytes);
+  if (!target) {
+    const prev = previousRelease(source);
+    if (!prev) throw new DowngradeError('no-older', 'There is no older Premiere release to convert this Production to.');
+    target = prev.version;
+  }
+  if (target < FIRST_PRODUCTION_VERSION) throw new DowngradeError('production-too-old', 'Productions only exist since Premiere Pro 2020 (April 2020).');
+  const newFolder = `${folder}_downgraded`;
+  const out = [];
+  const errors = [];
+  let projects = 0;
+  let copied = 0;
+  const rebase = (p) => (p.startsWith(folder + '/') ? newFolder + p.slice(folder.length) : `${newFolder}/${p}`);
+  for (const f of files) {
+    try {
+      if (f === ps) {
+        out.push({ path: `${newFolder}/${newFolder}.prodset`, bytes: downgradeProdset(f.bytes, target) });
+        projects++;
+      } else if (/\.prproj$/i.test(f.path)) {
+        try {
+          out.push({ path: rebase(f.path), bytes: downgrade(f.bytes, target).bytes });
+          projects++;
+        } catch (e) {
+          if (e.code !== 'not-older') throw e;
+          out.push({ path: rebase(f.path), bytes: f.bytes });
+          copied++;
+        }
+      } else {
+        out.push({ path: rebase(f.path), bytes: f.bytes });
+        copied++;
+      }
+    } catch (e) {
+      errors.push({ path: f.path, error: e.message });
+    }
+  }
+  return { files: out, folder: newFolder, targetVersion: target, sourceVersion: source, projects, copied, errors };
+}

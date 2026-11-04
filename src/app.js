@@ -1,97 +1,95 @@
-// OpenOlder UI: Premiere Pro project downgrader.
+// OpenOlder UI: Premiere Pro project / Production downgrader.
 (function () {
+  const CFG = Object.assign({ defaultTarget: null }, window.OPENOLDER_CONFIG || {});
   const $ = (s) => document.querySelector(s);
-  const drop = $('#drop');
-  const input = $('#file');
-  const status = $('#status');
-  const panel = $('#result');
-  const info = $('#fileinfo');
-  const targetEl = $('#target');
-  const btn = $('#convert');
+  const drop = $('#drop'), input = $('#file'), folderInput = $('#folder'), status = $('#status');
+  const panel = $('#result'), list = $('#items'), targetEl = $('#target'), btn = $('#convert');
+  const RELEASES = [[38, '2020.1'], [39, '2021'], [40, '2022'], [41, '2023'], [42, '2024'], [43, '2025'], [45, '2026']];
+  const RELEASES_ALL = [[22, 'CS4'], [23, 'CS5'], [24, 'CS5.5'], [25, 'CS6'], [26, 'CC'], [27, '2014'], [28, '2014.1'], [29, '2015'], [30, '2015.1'], [32, '2017'], [33, '2018'], [34, '2018.1'], [35, '2019'], [36, '2019.1'], [37, '2020'], ...RELEASES];
 
   const worker = new Worker('/worker.js', { type: 'module' });
-  let reqId = 0;
-  const pending = new Map();
-  worker.onmessage = (e) => {
-    const p = pending.get(e.data.id);
-    if (!p) return;
-    pending.delete(e.data.id);
-    e.data.ok ? p.resolve(e.data.result) : p.reject(new Error(e.data.error));
-  };
-  const call = (type, payload) => new Promise((resolve, reject) => {
-    const id = ++reqId;
-    pending.set(id, { resolve, reject });
-    worker.postMessage({ id, type, payload });
-  });
-
-  let current = null;
-
-  function setStatus(msg, kind) { status.textContent = msg; status.className = 'status ' + (kind || ''); }
+  let reqId = 0; const pending = new Map(); let analysis = null;
+  worker.onmessage = (e) => { const p = pending.get(e.data.id); if (!p) return; pending.delete(e.data.id); e.data.ok ? p.resolve(e.data.result) : p.reject(new Error(e.data.error)); };
+  const call = (type, payload) => new Promise((resolve, reject) => { const id = ++reqId; pending.set(id, { resolve, reject }); worker.postMessage({ id, type, payload }); });
+  const setStatus = (m, k) => { status.textContent = m; status.className = 'status ' + (k || ''); };
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const relName = (v) => (RELEASES_ALL.find(([n]) => n === v) || [, `version ${v}`])[1];
 
   function download(name, bytes) {
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([bytes], { type: 'application/octet-stream' }));
-    a.download = name;
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([bytes])); a.download = name;
+    document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
   }
 
-  async function handle(file) {
-    if (!file) return;
-    if (!/\.prproj$/i.test(file.name)) {
-      setStatus('Please choose a Premiere Pro project file (.prproj).', 'error');
-      return;
-    }
-    panel.hidden = true;
-    setStatus(`Reading ${file.name}…`, 'busy');
-    try {
-      const r = await call('inspect', { file });
-      current = { file, info: r };
-      const from = r.release ? `Premiere Pro ${r.release}` : `an unknown Premiere version (project version ${r.version})`;
-      info.textContent = `${file.name} was saved with ${from}.`;
-      targetEl.innerHTML = '';
-      if (!r.targets.length) {
-        setStatus('This project is already from the oldest version we know about.', 'error');
-        return;
+  // Read dropped folders recursively (Chrome, Edge, Firefox, Safari).
+  async function entriesToItems(entries) {
+    const out = [];
+    const readAll = (reader) => new Promise((res, rej) => { const acc = []; const step = () => reader.readEntries((b) => { if (!b.length) return res(acc); acc.push(...b); step(); }, rej); step(); });
+    async function walk(entry, prefix) {
+      if (entry.isFile) {
+        const file = await new Promise((res, rej) => entry.file(res, rej));
+        out.push({ path: prefix + entry.name, file });
+      } else if (entry.isDirectory) {
+        for (const child of await readAll(entry.createReader())) await walk(child, prefix + entry.name + '/');
       }
-      r.targets.forEach((t, i) => {
-        const o = document.createElement('option');
-        o.value = t.version;
-        o.textContent = `Premiere Pro ${t.name}`;
-        if (i === 0) o.selected = true;
-        targetEl.appendChild(o);
-      });
-      panel.hidden = false;
-      setStatus(r.unrecognised ? 'This file is from a Premiere version newer than we have tested. Conversion will be attempted anyway.' : '', r.unrecognised ? 'error' : '');
-    } catch (err) {
-      setStatus(err.message, 'error');
     }
+    for (const e of entries) if (e) await walk(e, '');
+    return out;
+  }
+
+  function fillTargets(sourceVersion, minVersion) {
+    targetEl.innerHTML = '';
+    const opts = RELEASES_ALL.filter(([v]) => v < sourceVersion && v >= (minVersion || 0)).reverse();
+    opts.forEach(([v, n], i) => {
+      const o = document.createElement('option'); o.value = v; o.textContent = `Premiere Pro ${n}`;
+      if ((CFG.defaultTarget && v === CFG.defaultTarget) || (!CFG.defaultTarget && i === 0)) o.selected = true;
+      targetEl.appendChild(o);
+    });
+    if (CFG.defaultTarget && ![...targetEl.options].some((o) => o.selected && +o.value === CFG.defaultTarget) && targetEl.options.length) targetEl.options[0].selected = true;
+    return opts.length;
+  }
+
+  async function handle(items) {
+    if (!items.length) return;
+    panel.hidden = true; setStatus(`Reading ${items.length === 1 ? items[0].path : items.length + ' files'}…`, 'busy');
+    try {
+      analysis = await call('analyse', { items });
+      if (analysis.mode === 'production') {
+        list.innerHTML = `<tr><td class="lname">${esc(analysis.name)} <span class="muted">(Production)</span></td><td>Premiere Pro ${esc(relName(analysis.version))}</td><td class="num">${analysis.projects} projects, ${analysis.other} other files</td></tr>`;
+        if (!fillTargets(analysis.version, analysis.firstProduction)) return setStatus('There is no older Premiere version this Production can be converted to.', 'error');
+      } else {
+        list.innerHTML = analysis.items.map((it) => `<tr><td class="lname">${esc(it.path.split('/').pop())}</td><td>${it.error ? `<span class="err">${esc(it.error)}</span>` : 'Premiere Pro ' + esc(it.release || relName(it.version))}</td><td></td></tr>`).join('');
+        const ok = analysis.items.filter((it) => !it.error);
+        if (!ok.length) return setStatus('None of these files could be read as Premiere Pro projects.', 'error');
+        if (!fillTargets(Math.min(...ok.map((it) => it.version)))) return setStatus('These projects are already from the oldest Premiere version we know.', 'error');
+      }
+      panel.hidden = false; setStatus('');
+    } catch (err) { setStatus(err.message, 'error'); }
   }
 
   async function convert() {
-    if (!current) return;
-    btn.disabled = true;
-    setStatus('Converting…', 'busy');
+    if (!analysis) return;
+    btn.disabled = true; setStatus('Converting…', 'busy');
     try {
       const target = parseInt(targetEl.value, 10);
-      const r = await call('downgrade', { file: current.file, target });
-      const base = current.file.name.replace(/\.prproj$/i, '');
-      download(`${base}_Premiere${r.targetName || r.targetVersion}.prproj`, r.bytes);
-      let msg = `Done. Open the downloaded file in Premiere Pro ${r.targetName}. Features that only exist in Premiere ${r.sourceName} (for example new masks or new text tools) will not appear.`;
-      setStatus(msg, 'ok');
-    } catch (err) {
-      setStatus(err.message, 'error');
-    } finally {
-      btn.disabled = false;
-    }
+      const r = await call('convert', { target });
+      download(r.name, r.bytes);
+      let msg = `Done. Open the downloaded ${/\.zip$/.test(r.name) ? 'files' : 'project'} in Premiere Pro ${relName(target)}. Features that only exist in newer versions will not appear.`;
+      if (r.errors?.length) msg += ` ${r.errors.length} file(s) could not be converted: ${r.errors.map((e) => e.path.split('/').pop()).join(', ')}.`;
+      setStatus(msg, r.errors?.length ? 'error' : 'ok');
+    } catch (err) { setStatus(err.message, 'error'); } finally { btn.disabled = false; }
   }
 
-  drop.addEventListener('click', () => input.click());
+  drop.addEventListener('click', (e) => { if (e.target.id !== 'pick-folder') input.click(); });
   drop.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); } });
-  input.addEventListener('change', () => handle(input.files[0]));
+  $('#pick-folder').addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); folderInput.click(); });
+  input.addEventListener('change', () => handle([...input.files].map((f) => ({ path: f.name, file: f }))));
+  folderInput.addEventListener('change', () => handle([...folderInput.files].map((f) => ({ path: f.webkitRelativePath || f.name, file: f }))));
   ['dragenter', 'dragover'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add('over'); }));
   ['dragleave', 'drop'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove('over'); }));
-  drop.addEventListener('drop', (e) => handle(e.dataTransfer.files[0]));
+  drop.addEventListener('drop', async (e) => {
+    const its = e.dataTransfer.items;
+    if (its && its.length && its[0].webkitGetAsEntry) handle(await entriesToItems([...its].map((i) => i.webkitGetAsEntry())));
+    else handle([...e.dataTransfer.files].map((f) => ({ path: f.name, file: f })));
+  });
   btn.addEventListener('click', convert);
 })();

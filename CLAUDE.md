@@ -11,4 +11,5 @@ Owner: Jiayi (reply in Chinese, plain language; she is not a developer). Sister 
 - Before pushing: `npm test` and `npm run build && node scripts/smoke-browser.cjs` must pass.
 
 ## Status
-Demo: Premiere page (`/`) and Ableton beta page (`/ableton-12-to-11/`, tested only with a synthetic set; no real Live 11/12 test yet). Full version waits for Jiayi's real-machine test in Premiere 2026/2025 (`docs/TEST-CHECKLIST.zh.md`).
+Premiere full version built (7 SEO pages from `src/pages.json` + `src/template.html`; single, batch, Production folder/zip) but **not yet verified in real Premiere** — do not promote until Jiayi's real-machine test (`docs/TEST-CHECKLIST.zh.md`) passes. Ableton beta page (`/ableton-12-to-11/`) tested only with a synthetic set.
+Tests: `npm test`; `npm run build && node scripts/smoke-browser.cjs && node scripts/smoke-ableton.cjs` (use `PORT=` if busy, `BASE_URL=` for the live site). Deploy: Cloudflare Pages project `openolder`, auto-deploys branch `demo-v0.1`; `SITE_URL`/`NOINDEX=0` only at real launch.

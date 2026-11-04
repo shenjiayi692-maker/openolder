@@ -1,0 +1,108 @@
+[
+  {
+    "slug": "",
+    "title": "Premiere Pro Project Downgrader: Open Newer Projects in Older Versions | OpenOlder",
+    "description": "Downgrade a Premiere Pro project (.prproj) or Production so an older version can open it, including Premiere Pro 2026 projects. Free, runs in your browser, nothing uploaded.",
+    "h1": "Premiere Pro Project Downgrader",
+    "subtitle": "Open a project from a newer Premiere Pro in an older one, including 2026 projects. Your files stay on your computer.",
+    "defaultTarget": null,
+    "lead": "Premiere Pro refuses to open a project saved by a newer version. This tool rewrites a copy of the project so the version you pick can open it. It works on single projects, several projects at once, and whole Productions.",
+    "steps": ["Drop one or more .prproj files, a Production folder, or a .zip of either.", "Pick the Premiere Pro version you need to open it in.", "Click Convert & download and open the new copy in that version."],
+    "faq": [
+      ["Is my project uploaded?", "No. The conversion runs inside your browser. Your project never leaves your computer."],
+      ["Will everything come across?", "Your timeline, clips, cuts, titles and most effects do. Features that only exist in the newer version, such as new masks or the new text tool, will not appear in the older version."],
+      ["Does it change my original project?", "No. You download a new copy. Keep the original."],
+      ["Do I need my media files?", "No. Only the project file is converted. When you open it, point Premiere to your media as usual if it asks."]
+    ]
+  },
+  {
+    "slug": "premiere-2026-to-2025",
+    "title": "Open a Premiere Pro 2026 Project in 2025 (Free Converter) | OpenOlder",
+    "description": "Premiere Pro 2025 can't open 2026 projects. Convert a 2026 .prproj so Premiere Pro 2025 opens it. Free, in your browser, no upload.",
+    "h1": "Open a Premiere Pro 2026 Project in 2025",
+    "subtitle": "Convert a 2026 project so Premiere Pro 2025 can open it.",
+    "defaultTarget": 43,
+    "lead": "Premiere Pro 2026 saves projects in a more compact form. Older versions need fields that 2026 leaves out, so simply changing the version number gives a \"project is damaged\" error. This tool adds those fields back, then sets the version to 2025.",
+    "steps": ["Drop the 2026 .prproj file (or several).", "Keep 'Premiere Pro 2025' selected.", "Click Convert & download, then open the new copy in Premiere Pro 2025."],
+    "faq": [
+      ["Why does the old rename-and-edit trick fail with 2026?", "Since 2026 the project file omits some required fields. Older versions report the project as damaged when they are missing. Changing the version number alone does not add them back."],
+      ["What will I lose?", "Anything that only exists in 2026, such as new masking or text features. The rest of the edit comes across."]
+    ]
+  },
+  {
+    "slug": "premiere-2026-to-2024",
+    "title": "Open a Premiere Pro 2026 Project in 2024 | OpenOlder",
+    "description": "Convert a Premiere Pro 2026 project so Premiere Pro 2024 can open it. Free, in your browser, nothing uploaded.",
+    "h1": "Open a Premiere Pro 2026 Project in 2024",
+    "subtitle": "Convert a 2026 project so Premiere Pro 2024 can open it.",
+    "defaultTarget": 42,
+    "lead": "Going two versions back works the same way: the fields 2026 leaves out are added back and the project is marked as a 2024 project. The further back you go, the more newer features will be missing.",
+    "steps": ["Drop the 2026 .prproj file.", "Choose 'Premiere Pro 2024'.", "Click Convert & download and open the copy in Premiere Pro 2024."],
+    "faq": [
+      ["Can I convert a 2025 project to 2024 too?", "Yes. The tool reads the version of each project and offers every older version."]
+    ]
+  },
+  {
+    "slug": "premiere-2026-to-2023",
+    "title": "Downgrade Premiere Pro 2026 Projects to 2023, 2022 or Older | OpenOlder",
+    "description": "Convert a Premiere Pro 2026 project to open in Premiere Pro 2023, 2022, 2021 or older versions. Free and private.",
+    "h1": "Downgrade Premiere Pro 2026 to 2023 or Older",
+    "subtitle": "Pick any older Premiere Pro version, back to CS4.",
+    "defaultTarget": 41,
+    "lead": "Every Premiere Pro release has its own project version number. The tool knows all of them, from CS4 to 2026, and lets you pick the one you need. Very old versions lack many features, so check the result carefully.",
+    "steps": ["Drop the .prproj file.", "Choose the version you need, for example 'Premiere Pro 2023'.", "Click Convert & download."],
+    "faq": [
+      ["Which versions can I pick?", "Any release older than the project: 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2015, 2014, CC, CS6, CS5.5, CS5 and CS4."],
+      ["Can Productions go back that far?", "Productions only exist since Premiere Pro 2020 (April 2020), so a Production can go back to 2020.1 at most."]
+    ]
+  },
+  {
+    "slug": "project-saved-in-newer-version",
+    "title": "\"This Project Was Saved in a Newer Version of Premiere Pro\": Fix | OpenOlder",
+    "description": "Getting \"This project was saved in a newer version of Adobe Premiere Pro and cannot be opened\"? Convert the project so your version opens it.",
+    "h1": "\"This project was saved in a newer version\"",
+    "subtitle": "Fix the error by converting the project to your Premiere Pro version.",
+    "defaultTarget": null,
+    "lead": "Premiere Pro shows this message when the project comes from a newer release than the one you have. You have three options: update Premiere Pro, ask the sender to export an XML, or convert the project here.",
+    "steps": ["Drop the project that shows the error.", "Pick the Premiere Pro version you have installed (Help > About Premiere Pro shows it).", "Click Convert & download and open the new copy."],
+    "faq": [
+      ["Which version do I have?", "In Premiere Pro, open Help > About Premiere Pro (Premiere Pro > About on Mac). 25.x is 2025, 24.x is 2024, 26.x is 2026."],
+      ["The converted project says media is offline.", "That's normal when the media is on another computer or drive. Use Link Media to point Premiere to the files."]
+    ]
+  },
+  {
+    "slug": "open-premiere-project-in-older-version",
+    "title": "How to Open a Premiere Pro Project in an Older Version (3 Ways) | OpenOlder",
+    "description": "Three ways to open a newer Premiere Pro project in an older version: XML export, a desktop downgrader, or this browser tool. Pros and cons of each.",
+    "h1": "Open a Premiere Pro Project in an Older Version",
+    "subtitle": "Three ways, and when to use each.",
+    "defaultTarget": null,
+    "lead": "If you still have the newer Premiere Pro, exporting a Final Cut Pro XML works but can lose effects and settings. If you only have the project file, convert it directly with the tool above.",
+    "steps": ["This tool: drop the .prproj and convert. Works without the newer Premiere installed.", "XML export: in the newer version, File > Export > Final Cut Pro XML, then import the XML in the older version. Some effects and settings are lost.", "Desktop tool: prem-down (free, open source) converts projects from a right-click menu on Mac and Windows."],
+    "compare": [
+      ["", "This tool", "XML export", "prem-down (desktop)"],
+      ["Needs the newer Premiere", "No", "Yes", "No"],
+      ["Install required", "No", "No", "Yes"],
+      ["Handles 2026 projects", "Yes", "Yes", "Yes"],
+      ["Keeps effects and settings", "Most", "Some are lost", "Most"],
+      ["Productions", "Yes", "No", "Yes"]
+    ],
+    "faq": [
+      ["Which method is the most reliable?", "Converting the project keeps more of the edit than XML. Always keep the original and check the result."]
+    ]
+  },
+  {
+    "slug": "premiere-production-downgrade",
+    "title": "Downgrade a Premiere Pro Production to an Older Version | OpenOlder",
+    "description": "Convert a whole Premiere Pro Production folder (.prodset and all projects) so an older Premiere Pro can open it. Free, in your browser.",
+    "h1": "Downgrade a Premiere Pro Production",
+    "subtitle": "Convert a whole Production folder in one go.",
+    "defaultTarget": null,
+    "lead": "A Production is a folder with one .prodset settings file and many projects. The tool converts every project inside, updates the settings file, and gives you the whole folder back as a .zip, renamed with _downgraded.",
+    "steps": ["Drag the Production folder onto the box, use 'choose a folder', or drop a .zip of it.", "Pick the Premiere Pro version (2020.1 or newer).", "Click Convert & download, unzip, and open the _downgraded Production."],
+    "faq": [
+      ["Why is the settings file rewritten?", "Premiere Pro 2026 saves it as UTF-8 while 2025 and older expect UTF-16. Without the change, 2025 reports invalid settings."],
+      ["Are my media files included?", "Only files inside the Production folder are copied. Media stored elsewhere stays where it is."]
+    ]
+  }
+]
