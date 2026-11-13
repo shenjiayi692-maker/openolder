@@ -38,7 +38,11 @@ for (const p of pages) {
     compare = `<section><h2>Comparison</h2><div class="table-wrap"><table class="spec compare"><thead><tr>${head.map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map((r) => `<tr>${r.map((c, i) => (i ? `<td>${esc(c)}</td>` : `<th>${esc(c)}</th>`)).join('')}</tr>`).join('')}</tbody></table></div></section>`;
   }
   const jsonld = JSON.stringify([
-    { '@context': 'https://schema.org', '@type': 'SoftwareApplication', name: 'OpenOlder Premiere Pro Project Downgrader', applicationCategory: 'UtilitiesApplication', operatingSystem: 'Any (web browser)', url: url(p.slug), description: p.description, offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' } },
+    { '@context': 'https://schema.org', '@type': 'SoftwareApplication', name: 'OpenOlder Premiere Pro Project Downgrader', applicationCategory: 'UtilitiesApplication', operatingSystem: 'Any (web browser)', url: url(p.slug), description: p.description, offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' }, publisher: { '@id': `${SITE}/#org` } },
+    ...(p.slug ? [] : [
+      { '@context': 'https://schema.org', '@type': 'Organization', '@id': `${SITE}/#org`, name: 'OpenOlder', url: `${SITE}/`, logo: `${SITE}/favicon.svg`, email: 'hello@openolder.com' },
+      { '@context': 'https://schema.org', '@type': 'WebSite', name: 'OpenOlder', url: `${SITE}/`, publisher: { '@id': `${SITE}/#org` } },
+    ]),
     { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: p.faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) },
     { '@context': 'https://schema.org', '@type': 'HowTo', name: p.h1, step: p.steps.map((s, i) => ({ '@type': 'HowToStep', position: i + 1, text: s })) },
   ]).replace(/</g, '\\u003c');
