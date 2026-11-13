@@ -92,6 +92,30 @@
     ]
   },
   {
+    "slug": "premiere-xml-vs-project-downgrade",
+    "title": "Premiere Pro XML Export vs Project Downgrade: Which Keeps More? | OpenOlder",
+    "description": "Moving a Premiere Pro project to an older version? Compare Final Cut Pro XML export with converting the .prproj directly: what each keeps, what each loses, and when to use which.",
+    "h1": "XML Export vs Project Downgrade",
+    "subtitle": "Two ways to move an edit to an older Premiere Pro, compared side by side.",
+    "defaultTarget": null,
+    "lead": "The usual advice is to export a Final Cut Pro XML from the newer Premiere Pro. That only works if you have the newer version, and the XML format can't carry many Premiere effects, titles and settings. Converting the .prproj itself keeps the project as Premiere saved it and only rewrites what the older version can't read.",
+    "steps": ["Converting the project: drop the .prproj above, choose your version and click Convert & download.", "XML export: in the newer Premiere Pro, select the sequence, then File > Export > Final Cut Pro XML.", "Open the converted .prproj, or import the XML with File > Import, in the older version. Relink media if needed and check effects, titles and audio."],
+    "compare": [
+      ["", "Project downgrade (this tool)", "Final Cut Pro XML"],
+      ["Needs the newer Premiere installed", "No", "Yes"],
+      ["Bins, sequences and project settings", "Kept", "Partly"],
+      ["Premiere effects and keyframes", "Most kept", "Many lost or reset"],
+      ["Essential Graphics / titles", "Kept if the older version supports them", "Usually lost"],
+      ["Productions", "Yes", "No"],
+      ["Works for any editing app", "No, Premiere only", "Yes (Final Cut, Resolve, Avid)"]
+    ],
+    "faq": [
+      ["When is XML the better choice?", "When the project has to go to a different editing app such as DaVinci Resolve or Final Cut Pro, or when a downgraded project won't open. XML is a lowest common denominator, so it is portable but loses detail."],
+      ["What does a project downgrade lose?", "Only features that don't exist in the older version, such as effects or panels added in the newer release. Those items may show as missing or offline. Keep the original project."],
+      ["Can I use both?", "Yes. Convert the project first; if a single sequence misbehaves, export that sequence as XML from the newer version and import it."]
+    ]
+  },
+  {
     "slug": "premiere-production-downgrade",
     "title": "Downgrade a Premiere Pro Production to an Older Version | OpenOlder",
     "description": "Convert a whole Premiere Pro Production folder (.prodset and all projects) so an older Premiere Pro can open it. Free, in your browser.",

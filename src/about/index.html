@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!--ROBOTS-->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About OpenOlder | OpenOlder</title>
+<meta name="description" content="Who makes OpenOlder, why it exists, how it converts Premiere Pro and Ableton Live projects locally in your browser, what it can't do, and how to get in touch.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header class="topbar"><div class="wrap topbar-in">
+  <a class="brand" href="/"><img src="/favicon.svg" alt="" width="22" height="22">OpenOlder</a>
+  <nav class="topnav"><a href="/">Premiere Pro</a><a href="/ableton-12-to-11/">Ableton Live</a><a href="/licenses/">Licenses</a></nav>
+</div></header>
+<main class="wrap prose">
+<h1>About OpenOlder</h1>
+<p>OpenOlder is a small independent project made by Jiayi, an independent developer based in Canada. It exists because editors and producers often receive project files saved in a newer version of their software than the one they have, and updating isn't always possible: a studio may be locked to one version, or a client's machine may not support the new release.</p>
+<h2>How it works</h2>
+<p>A Premiere Pro project (.prproj) is compressed XML. OpenOlder opens it in your browser, adds back the fields older versions expect, sets the version number and gives you a new copy. Ableton Live sets (.als) are handled the same way. Everything runs on your own computer: your files are never uploaded, there is no account, and the original file is not changed.</p>
+<h2>What it can and can't do</h2>
+<ul>
+<li>Premiere Pro: converts projects and Productions from 2026 back to older versions. Features that only exist in the newer release may show as missing.</li>
+<li>Ableton Live: converts Live 12 sets for Live 11 (beta). Devices that only exist in Live 12 can't be recreated.</li>
+<li>It doesn't convert media, render files or plug-ins, only the project file.</li>
+</ul>
+<p>Always keep the original and check the converted project before relying on it.</p>
+<h2>Credits and independence</h2>
+<p>The Premiere conversion is based on <a href="https://github.com/lucuma13/prem-down">prem-down</a> by Luis Gómez Gutiérrez (MIT) and the Ableton conversion on <a href="https://github.com/mslinn/live_set">live_set</a> by Michael Slinn (noncommercial license). Details are on the <a href="/licenses/">licenses page</a>. OpenOlder is not affiliated with or endorsed by Adobe or Ableton.</p>
+<h2>Contact</h2>
+<p>A project that doesn't open after converting, or a suggestion? Email <a href="mailto:hello@openolder.com">hello@openolder.com</a> and say which versions you converted from and to.</p>
+</main>
+<footer class="footer"><div class="wrap footer-in">
+  <div><a class="brand" href="/"><img src="/favicon.svg" alt="" width="20" height="20">OpenOlder</a></div>
+  <div class="footer-links"><a href="/about/">About</a><a href="/licenses/">Open-source licenses</a></div>
+</div><div class="wrap"><p class="small muted legal">OpenOlder is an independent tool, not affiliated with or endorsed by Adobe or Ableton. Adobe and Premiere Pro are trademarks of Adobe. Ableton and Live are trademarks of Ableton AG.</p></div></footer>
+</body>
+</html>

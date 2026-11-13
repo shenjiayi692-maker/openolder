@@ -10,6 +10,8 @@ const NOINDEX = process.env.NOINDEX !== '0';
 const SITE = (process.env.SITE_URL || 'https://openolder.pages.dev').replace(/\/$/, '');
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const url = (slug) => `${SITE}/${slug ? slug + '/' : ''}`;
+// title/description are already HTML-escaped
+const og = (title, desc, href) => `<meta property="og:title" content="${title}">${desc ? `<meta property="og:description" content="${desc}">` : ''}<meta property="og:type" content="website"><meta property="og:url" content="${href}"><meta property="og:site_name" content="OpenOlder">`;
 const ROBOTS = NOINDEX ? '<meta name="robots" content="noindex, nofollow">' : '';
 
 fs.rmSync(dist, { recursive: true, force: true });
@@ -41,7 +43,7 @@ for (const p of pages) {
     { '@context': 'https://schema.org', '@type': 'HowTo', name: p.h1, step: p.steps.map((s, i) => ({ '@type': 'HowToStep', position: i + 1, text: s })) },
   ]).replace(/</g, '\\u003c');
   const html = tpl
-    .replace('<!--ROBOTS-->', ROBOTS)
+    .replace('<!--ROBOTS-->', ROBOTS + og(esc(p.title), esc(p.description), url(p.slug)))
     .replaceAll('{{title}}', esc(p.title))
     .replaceAll('{{description}}', esc(p.description))
     .replace('{{canonical}}', url(p.slug))
@@ -58,15 +60,21 @@ for (const p of pages) {
   fs.writeFileSync(path.join(dist, p.slug, 'index.html'), html);
 }
 
-for (const f of ['licenses/index.html', 'ableton-12-to-11/index.html']) {
-  const p = path.join(dist, f);
-  fs.writeFileSync(p, fs.readFileSync(p, 'utf8').replace('<!--ROBOTS-->', ROBOTS));
+// hand-written pages: add robots, canonical and share-preview tags
+const STATIC = ['licenses', 'ableton-12-to-11', 'about'];
+for (const slug of STATIC) {
+  const p = path.join(dist, slug, 'index.html');
+  let html = fs.readFileSync(p, 'utf8');
+  const title = (html.match(/<title>([^<]*)<\/title>/) || [])[1] || 'OpenOlder';
+  const desc = (html.match(/<meta name="description" content="([^"]*)"/) || [])[1];
+  const head = `${ROBOTS}<link rel="canonical" href="${url(slug)}">${og(title, desc, url(slug))}`;
+  fs.writeFileSync(p, html.replace('<!--ROBOTS-->', head));
 }
 
-const slugs = [...pages.map((p) => p.slug), 'ableton-12-to-11'];
+const slugs = [...pages.map((p) => p.slug), 'ableton-12-to-11', 'about'];
 const today = new Date().toISOString().slice(0, 10);
 fs.writeFileSync(path.join(dist, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${slugs.map((s) => `  <url><loc>${url(s)}</loc><lastmod>${today}</lastmod></url>`).join('\n')}\n</urlset>\n`);
 fs.writeFileSync(path.join(dist, 'robots.txt'), NOINDEX ? 'User-agent: *\nDisallow: /\n' : `User-agent: *\nAllow: /\n\nSitemap: ${SITE}/sitemap.xml\n`);
-fs.writeFileSync(path.join(dist, 'llms.txt'), `# OpenOlder\n\n> Free browser tools that let older software open newer project files. Files are processed in the browser and never uploaded.\n\n## Premiere Pro\n${pages.map((p) => `- [${p.h1.replace(/"/g, '')}](${url(p.slug)}): ${p.description}`).join('\n')}\n\n## Ableton Live\n- [Ableton Live 12 to 11 (beta)](${url('ableton-12-to-11')}): inspect a Live set and convert a Live 12 set for Live 11.\n`);
+fs.writeFileSync(path.join(dist, 'llms.txt'), `# OpenOlder\n\n> Free browser tools that let older software open newer project files. Files are processed in the browser and never uploaded.\n\n## Premiere Pro\n${pages.map((p) => `- [${p.h1.replace(/"/g, '')}](${url(p.slug)}): ${p.description}`).join('\n')}\n\n## Ableton Live\n- [Ableton Live 12 to 11 (beta)](${url('ableton-12-to-11')}): inspect a Live set and convert a Live 12 set for Live 11.\n\n## About\n- [About OpenOlder](${url('about')}): who makes it, how it works, contact\n`);
 fs.writeFileSync(path.join(dist, '404.html'), fs.readFileSync(path.join(dist, 'index.html'), 'utf8'));
-console.log(`Built ${pages.length + 2} pages into dist/ for ${SITE}${NOINDEX ? ' (noindex preview)' : ''}`);
+console.log(`Built ${pages.length + STATIC.length} pages into dist/ for ${SITE}${NOINDEX ? ' (noindex preview)' : ''}`);
