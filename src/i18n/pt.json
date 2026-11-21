@@ -49,7 +49,8 @@
       "Could not find the project version in this file.": "Não foi possível encontrar a versão do projeto neste arquivo.",
       "No Premiere Pro project (.prproj) found.": "Nenhum projeto do Premiere Pro (.prproj) foi encontrado.",
       "These files contain more than one .prodset. Convert one Production at a time.": "Estes arquivos contêm mais de um .prodset. Converta uma Produção de cada vez."
-    }
+    },
+    "untested": "Este projeto foi salvo por uma versão do Premiere mais nova que a 2026 (provavelmente o Premiere 27). A conversão ainda não foi testada, então o resultado pode não abrir. Guarde o original. Se der errado, escreva para hello@openolder.com: o suporte à nova versão está sendo adicionado."
   },
   "pages": {
     "": {
@@ -64,10 +65,22 @@
         "Clique em Converter e baixar e abra a nova cópia nessa versão."
       ],
       "faq": [
-        ["Meu projeto é enviado para algum servidor?", "Não. A conversão acontece dentro do seu navegador. Seu projeto nunca sai do seu computador."],
-        ["Tudo é mantido?", "A timeline, os clipes, os cortes, os títulos e a maioria dos efeitos, sim. Recursos que só existem na versão mais nova, como as novas máscaras ou a nova ferramenta de texto, não vão aparecer na versão anterior."],
-        ["O projeto original é alterado?", "Não. Você baixa uma cópia nova. Guarde o original."],
-        ["Preciso dos arquivos de mídia?", "Não. Só o arquivo de projeto é convertido. Ao abrir, se o Premiere pedir, indique onde está a sua mídia, como sempre."]
+        [
+          "Meu projeto é enviado para algum servidor?",
+          "Não. A conversão acontece dentro do seu navegador. Seu projeto nunca sai do seu computador."
+        ],
+        [
+          "Tudo é mantido?",
+          "A timeline, os clipes, os cortes, os títulos e a maioria dos efeitos, sim. Recursos que só existem na versão mais nova, como as novas máscaras ou a nova ferramenta de texto, não vão aparecer na versão anterior."
+        ],
+        [
+          "O projeto original é alterado?",
+          "Não. Você baixa uma cópia nova. Guarde o original."
+        ],
+        [
+          "Preciso dos arquivos de mídia?",
+          "Não. Só o arquivo de projeto é convertido. Ao abrir, se o Premiere pedir, indique onde está a sua mídia, como sempre."
+        ]
       ],
       "updated": "2026-11-21"
     },
@@ -83,8 +96,14 @@
         "Clique em Converter e baixar e abra a nova cópia no Premiere Pro 2025."
       ],
       "faq": [
-        ["Por que o velho truque de descompactar e editar a versão não funciona com o 2026?", "Desde o 2026, o arquivo de projeto omite alguns campos obrigatórios. Sem eles, as versões anteriores dizem que o projeto está danificado. Só trocar o número da versão não traz esses campos de volta."],
-        ["O que eu vou perder?", "Tudo o que só existe no 2026, como os novos recursos de máscara e de texto. O resto da edição é mantido."]
+        [
+          "Por que o velho truque de descompactar e editar a versão não funciona com o 2026?",
+          "Desde o 2026, o arquivo de projeto omite alguns campos obrigatórios. Sem eles, as versões anteriores dizem que o projeto está danificado. Só trocar o número da versão não traz esses campos de volta."
+        ],
+        [
+          "O que eu vou perder?",
+          "Tudo o que só existe no 2026, como os novos recursos de máscara e de texto. O resto da edição é mantido."
+        ]
       ],
       "body": [
         {

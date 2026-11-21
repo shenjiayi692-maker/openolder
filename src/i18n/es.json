@@ -49,7 +49,8 @@
       "Could not find the project version in this file.": "No se ha encontrado la versión del proyecto en este archivo.",
       "No Premiere Pro project (.prproj) found.": "No se ha encontrado ningún proyecto de Premiere Pro (.prproj).",
       "These files contain more than one .prodset. Convert one Production at a time.": "Estos archivos contienen más de un .prodset. Convierte una sola Producción cada vez."
-    }
+    },
+    "untested": "Este proyecto se guardó con una versión de Premiere posterior a 2026 (probablemente Premiere 27). Su conversión aún no se ha probado, así que el resultado podría no abrirse. Conserva el original. Si falla, escribe a hello@openolder.com: estamos añadiendo compatibilidad con la nueva versión."
   },
   "pages": {
     "": {
@@ -64,10 +65,22 @@
         "Haz clic en Convertir y descargar y abre la nueva copia en esa versión."
       ],
       "faq": [
-        ["¿Se sube mi proyecto a algún servidor?", "No. La conversión se hace dentro de tu navegador. Tu proyecto nunca sale de tu equipo."],
-        ["¿Se conserva todo?", "Se conservan la línea de tiempo, los clips, los cortes, los títulos y la mayoría de los efectos. Las funciones que solo existen en la versión más reciente, como las nuevas máscaras o la nueva herramienta de texto, no aparecerán en la versión anterior."],
-        ["¿Se modifica mi proyecto original?", "No. Descargas una copia nueva. Conserva el original."],
-        ["¿Necesito los archivos de medios?", "No. Solo se convierte el archivo de proyecto. Al abrirlo, indica a Premiere dónde están tus medios si te lo pide, como siempre."]
+        [
+          "¿Se sube mi proyecto a algún servidor?",
+          "No. La conversión se hace dentro de tu navegador. Tu proyecto nunca sale de tu equipo."
+        ],
+        [
+          "¿Se conserva todo?",
+          "Se conservan la línea de tiempo, los clips, los cortes, los títulos y la mayoría de los efectos. Las funciones que solo existen en la versión más reciente, como las nuevas máscaras o la nueva herramienta de texto, no aparecerán en la versión anterior."
+        ],
+        [
+          "¿Se modifica mi proyecto original?",
+          "No. Descargas una copia nueva. Conserva el original."
+        ],
+        [
+          "¿Necesito los archivos de medios?",
+          "No. Solo se convierte el archivo de proyecto. Al abrirlo, indica a Premiere dónde están tus medios si te lo pide, como siempre."
+        ]
       ],
       "updated": "2026-11-21"
     },
@@ -83,8 +96,14 @@
         "Haz clic en Convertir y descargar y abre la nueva copia en Premiere Pro 2025."
       ],
       "faq": [
-        ["¿Por qué el truco de siempre (descomprimir y cambiar la versión) ya no funciona con 2026?", "Desde 2026, el archivo de proyecto omite algunos campos obligatorios. Si faltan, las versiones anteriores indican que el proyecto está dañado. Cambiar solo el número de versión no los recupera."],
-        ["¿Qué voy a perder?", "Todo lo que solo existe en 2026, como las nuevas funciones de máscaras o de texto. El resto del montaje se conserva."]
+        [
+          "¿Por qué el truco de siempre (descomprimir y cambiar la versión) ya no funciona con 2026?",
+          "Desde 2026, el archivo de proyecto omite algunos campos obligatorios. Si faltan, las versiones anteriores indican que el proyecto está dañado. Cambiar solo el número de versión no los recupera."
+        ],
+        [
+          "¿Qué voy a perder?",
+          "Todo lo que solo existe en 2026, como las nuevas funciones de máscaras o de texto. El resto del montaje se conserva."
+        ]
       ],
       "body": [
         {
