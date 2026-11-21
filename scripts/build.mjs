@@ -124,7 +124,7 @@ for (const p of pages) {
 }
 
 // hand-written pages: add robots, canonical and share-preview tags
-const STATIC = ['licenses', 'ableton-12-to-11', 'about'];
+const STATIC = ['licenses', 'ableton-12-to-11', 'about', 'changelog'];
 for (const slug of STATIC) {
   const p = path.join(dist, slug, 'index.html');
   let html = fs.readFileSync(p, 'utf8');
@@ -134,7 +134,7 @@ for (const slug of STATIC) {
   fs.writeFileSync(p, html.replace('<!--ROBOTS-->', head));
 }
 
-const slugs = [...pages.map((p) => p.slug), 'ableton-12-to-11', 'about'];
+const slugs = [...pages.map((p) => p.slug), 'ableton-12-to-11', 'about', 'changelog'];
 const updated = Object.fromEntries([...pages.map((p) => [p.slug, p.updated]), ...translated.map((t) => [t.slug, t.updated])]);
 const xalt = (slug) => alternates(slug).map(([h, u]) => `<xhtml:link rel="alternate" hreflang="${h}" href="${u}"/>`).join('');
 const smEntries = [...slugs.map((s) => [s, s]), ...translated.map((t) => [t.slug, t.en])];
