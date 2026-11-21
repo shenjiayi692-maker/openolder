@@ -6,6 +6,8 @@
   let reqId = 0; const pending = new Map(); let current = null;
   worker.onmessage = (e) => { const p = pending.get(e.data.id); if (!p) return; pending.delete(e.data.id); e.data.ok ? p.resolve(e.data.result) : p.reject(new Error(e.data.error)); };
   const call = (type, payload) => new Promise((resolve, reject) => { const id = ++reqId; pending.set(id, { resolve, reject }); worker.postMessage({ id, type, payload }); });
+  // Anonymous usage count (see functions/api/e.js): event name and a short category only.
+  const track = (e, d) => { try { navigator.sendBeacon('/api/e', JSON.stringify({ e, d: d || '', p: location.pathname })); } catch (_) { /* ignore */ } };
   const setStatus = (m, k) => { status.textContent = m; status.className = 'status ' + (k || ''); };
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   function download(name, bytes) {
@@ -35,20 +37,22 @@
   }
   async function handle(file) {
     if (!file) return;
-    if (!/\.als$/i.test(file.name)) return setStatus('Please choose an Ableton Live set (.als).', 'error');
+    if (!/\.als$/i.test(file.name)) return track('als_fail', 'not_als'), setStatus('Please choose an Ableton Live set (.als).', 'error');
     panel.hidden = true; setStatus(`Reading ${file.name}…`, 'busy');
     try {
       const r = await call('inspect', { file }); current = file; renderReport(r, file.name); panel.hidden = false;
+      track('als_ok', `live${r.major ?? 'unknown'}`);
       setStatus(r.canDowngrade ? '' : `This set is from Live ${r.major ?? '?'}. Only Live 12 sets can be converted to Live 11; the report above still applies.`, r.canDowngrade ? '' : 'ok');
-    } catch (err) { setStatus(err.message, 'error'); }
+    } catch (err) { track('als_fail', 'error'); setStatus(err.message, 'error'); }
   }
   async function convert() {
     if (!current) return; btn.disabled = true; setStatus('Converting…', 'busy');
     try {
       const r = await call('downgrade', { file: current });
       download(current.name.replace(/\.als$/i, '') + '_Live11.als', r.bytes);
+      track('als_convert_ok', 'live11');
       setStatus('Done. Open the downloaded set in Live 11 and check it before you rely on it. Keep the original.', 'ok');
-    } catch (err) { setStatus(err.message, 'error'); } finally { btn.disabled = false; }
+    } catch (err) { track('als_convert_fail', 'error'); setStatus(err.message, 'error'); } finally { btn.disabled = false; }
   }
   drop.addEventListener('click', () => input.click());
   drop.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); } });
