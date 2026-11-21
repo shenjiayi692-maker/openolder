@@ -58,6 +58,9 @@ fs.writeFileSync(prodZip, Buffer.from(zipSync({
   // 2. 2026->2024 page default
   r = await run('/premiere-2026-to-2024/', p26);
   check('page default 2024', r.sel === 'Premiere Pro 2024' && ver(fs.readFileSync(r.out)) === 42, r.name);
+  // 2b. error page: default target 2025, fields restored
+  r = await run('/project-could-not-be-loaded-damaged/', p26);
+  check('damaged-error page 2026->2025', r.sel === 'Premiere Pro 2025' && ver(fs.readFileSync(r.out)) === 43 && boundsOk(fs.readFileSync(r.out)), r.name);
   // 3. batch of two -> zip
   r = await run('/', [p26, p26b], 'Premiere Pro 2025');
   const z = unzipSync(new Uint8Array(fs.readFileSync(r.out)));
@@ -82,7 +85,7 @@ fs.writeFileSync(prodZip, Buffer.from(zipSync({
   const st = await p.textContent('#status'); const cell = await p.textContent('#items').catch(() => '');
   check('bad file message', /could not be read|does not look like/i.test(st + cell), (st + ' ' + cell).trim().slice(0, 120));
   // 7. all pages load
-  for (const s of ['/', '/premiere-2026-to-2023/', '/project-saved-in-newer-version/', '/open-premiere-project-in-older-version/', '/licenses/', '/ableton-12-to-11/']) {
+  for (const s of ['/', '/premiere-2026-to-2023/', '/project-saved-in-newer-version/', '/project-could-not-be-loaded-damaged/', '/open-premiere-project-in-older-version/', '/licenses/', '/ableton-12-to-11/']) {
     const res = await p.goto(BASE + s); check('page ' + s, res.status() === 200);
   }
   await b.close(); server.close(); console.log('failures:', fail); process.exit(fail ? 1 : 0);
