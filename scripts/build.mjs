@@ -12,6 +12,12 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&l
 const url = (slug) => `${SITE}/${slug ? slug + '/' : ''}`;
 // title/description are already HTML-escaped
 const og = (title, desc, href) => `<meta property="og:title" content="${title}">${desc ? `<meta property="og:description" content="${desc}">` : ''}<meta property="og:type" content="website"><meta property="og:url" content="${href}"><meta property="og:site_name" content="OpenOlder">`;
+// Search results cut titles at about 60 characters: drop the brand suffix when it would not fit anyway.
+const fitTitle = (t) => (t.length > 60 ? t.replace(/ \| OpenOlder$/, '') : t);
+const rich = (s) => esc(s).replace(/`([^`]+)`/g, '<code>$1</code>');
+// Date the content last really changed (per page: "updated" in pages.json). Not the build date:
+// a sitemap whose lastmod changes on every deploy gets ignored by search engines.
+const CONTENT_UPDATED = '2026-11-13';
 const ROBOTS = NOINDEX ? '<meta name="robots" content="noindex, nofollow">' : '';
 
 fs.rmSync(dist, { recursive: true, force: true });
@@ -37,6 +43,7 @@ for (const p of pages) {
     const [head, ...rows] = p.compare;
     compare = `<section><h2>Comparison</h2><div class="table-wrap"><table class="spec compare"><thead><tr>${head.map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map((r) => `<tr>${r.map((c, i) => (i ? `<td>${esc(c)}</td>` : `<th>${esc(c)}</th>`)).join('')}</tr>`).join('')}</tbody></table></div></section>`;
   }
+  const body = (p.body || []).map((s) => `<section><h2>${esc(s.h2)}</h2>${(s.p || []).map((t) => `<p>${rich(t)}</p>`).join('')}${s.list ? `<ul>${s.list.map((t) => `<li>${rich(t)}</li>`).join('')}</ul>` : ''}</section>`).join('\n  ');
   const jsonld = JSON.stringify([
     { '@context': 'https://schema.org', '@type': 'SoftwareApplication', name: 'OpenOlder Premiere Pro Project Downgrader', applicationCategory: 'UtilitiesApplication', operatingSystem: 'Any (web browser)', url: url(p.slug), description: p.description, offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' }, publisher: { '@id': `${SITE}/#org` } },
     ...(p.slug ? [] : [
@@ -47,8 +54,9 @@ for (const p of pages) {
     { '@context': 'https://schema.org', '@type': 'HowTo', name: p.h1, step: p.steps.map((s, i) => ({ '@type': 'HowToStep', position: i + 1, text: s })) },
   ]).replace(/</g, '\\u003c');
   const html = tpl
-    .replace('<!--ROBOTS-->', ROBOTS + og(esc(p.title), esc(p.description), url(p.slug)))
-    .replaceAll('{{title}}', esc(p.title))
+    .replace('<!--ROBOTS-->', ROBOTS + og(esc(fitTitle(p.title)), esc(p.description), url(p.slug)))
+    .replaceAll('{{title}}', esc(fitTitle(p.title)))
+    .replace('{{body}}', body)
     .replaceAll('{{description}}', esc(p.description))
     .replace('{{canonical}}', url(p.slug))
     .replace('{{jsonld}}', jsonld)
@@ -76,8 +84,8 @@ for (const slug of STATIC) {
 }
 
 const slugs = [...pages.map((p) => p.slug), 'ableton-12-to-11', 'about'];
-const today = new Date().toISOString().slice(0, 10);
-fs.writeFileSync(path.join(dist, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${slugs.map((s) => `  <url><loc>${url(s)}</loc><lastmod>${today}</lastmod></url>`).join('\n')}\n</urlset>\n`);
+const updated = Object.fromEntries(pages.map((p) => [p.slug, p.updated]));
+fs.writeFileSync(path.join(dist, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${slugs.map((s) => `  <url><loc>${url(s)}</loc><lastmod>${updated[s] || CONTENT_UPDATED}</lastmod></url>`).join('\n')}\n</urlset>\n`);
 fs.writeFileSync(path.join(dist, 'robots.txt'), NOINDEX ? 'User-agent: *\nDisallow: /\n' : `User-agent: *\nAllow: /\n\nSitemap: ${SITE}/sitemap.xml\n`);
 fs.writeFileSync(path.join(dist, 'llms.txt'), `# OpenOlder\n\n> Free browser tools that let older software open newer project files. Files are processed in the browser and never uploaded.\n\n## Premiere Pro\n${pages.map((p) => `- [${p.h1.replace(/"/g, '')}](${url(p.slug)}): ${p.description}`).join('\n')}\n\n## Ableton Live\n- [Ableton Live 12 to 11 (beta)](${url('ableton-12-to-11')}): inspect a Live set and convert a Live 12 set for Live 11.\n\n## About\n- [About OpenOlder](${url('about')}): who makes it, how it works, contact\n`);
 fs.writeFileSync(path.join(dist, '404.html'), fs.readFileSync(path.join(dist, 'index.html'), 'utf8'));
