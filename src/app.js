@@ -1,6 +1,17 @@
 // OpenOlder UI: Premiere Pro project / Production downgrader.
 (function () {
   const CFG = Object.assign({ defaultTarget: null }, window.OPENOLDER_CONFIG || {});
+  // UI messages; translated pages set window.OPENOLDER_I18N (built from src/i18n/<lang>.json "app").
+  const MSG = Object.assign({
+    readingOne: 'Reading {name}…', readingMany: 'Reading {n} files…', production: 'Production', prodCounts: '{projects} projects, {other} other files',
+    version: 'version {v}', noOlderProduction: 'There is no older Premiere version this Production can be converted to.',
+    notProjects: 'None of these files could be read as Premiere Pro projects.', alreadyOldest: 'These projects are already from the oldest Premiere version we know.',
+    converting: 'Converting…', doneProject: 'Done. Open the downloaded project in Premiere Pro {version}. Features that only exist in newer versions will not appear.',
+    doneFiles: 'Done. Open the downloaded files in Premiere Pro {version}. Features that only exist in newer versions will not appear.',
+    partial: ' {n} file(s) could not be converted: {names}.', errors: {},
+  }, window.OPENOLDER_I18N || {});
+  const t = (k, v) => MSG[k].replace(/\{(\w+)\}/g, (_, n) => v[n]);
+  const tErr = (m) => MSG.errors[m] || m;
   const $ = (s) => document.querySelector(s);
   const drop = $('#drop'), input = $('#file'), folderInput = $('#folder'), status = $('#status');
   const panel = $('#result'), list = $('#items'), targetEl = $('#target'), btn = $('#convert');
@@ -15,7 +26,7 @@
   // Anonymous usage count (see functions/api/e.js): event name and a short category only.
   const track = (e, d) => { try { navigator.sendBeacon('/api/e', JSON.stringify({ e, d: d || '', p: location.pathname })); } catch (_) { /* ignore */ } };
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  const relName = (v) => (RELEASES_ALL.find(([n]) => n === v) || [, `version ${v}`])[1];
+  const relName = (v) => (RELEASES_ALL.find(([n]) => n === v) || [, t('version', { v })])[1];
 
   function download(name, bytes) {
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([bytes])); a.download = name;
@@ -52,39 +63,39 @@
 
   async function handle(items) {
     if (!items.length) return;
-    panel.hidden = true; setStatus(`Reading ${items.length === 1 ? items[0].path : items.length + ' files'}…`, 'busy');
+    panel.hidden = true; setStatus(items.length === 1 ? t('readingOne', { name: items[0].path }) : t('readingMany', { n: items.length }), 'busy');
     try {
       analysis = await call('analyse', { items });
       if (analysis.mode === 'production') {
-        list.innerHTML = `<tr><td class="lname">${esc(analysis.name)} <span class="muted">(Production)</span></td><td>Premiere Pro ${esc(relName(analysis.version))}</td><td class="num">${analysis.projects} projects, ${analysis.other} other files</td></tr>`;
-        if (!fillTargets(analysis.version, analysis.firstProduction)) return track('analyze_fail', 'no_older'), setStatus('There is no older Premiere version this Production can be converted to.', 'error');
+        list.innerHTML = `<tr><td class="lname">${esc(analysis.name)} <span class="muted">(${esc(MSG.production)})</span></td><td>Premiere Pro ${esc(relName(analysis.version))}</td><td class="num">${esc(t('prodCounts', { projects: analysis.projects, other: analysis.other }))}</td></tr>`;
+        if (!fillTargets(analysis.version, analysis.firstProduction)) return track('analyze_fail', 'no_older'), setStatus(MSG.noOlderProduction, 'error');
       } else {
-        list.innerHTML = analysis.items.map((it) => `<tr><td class="lname">${esc(it.path.split('/').pop())}</td><td>${it.error ? `<span class="err">${esc(it.error)}</span>` : 'Premiere Pro ' + esc(it.release || relName(it.version))}</td><td></td></tr>`).join('');
+        list.innerHTML = analysis.items.map((it) => `<tr><td class="lname">${esc(it.path.split('/').pop())}</td><td>${it.error ? `<span class="err">${esc(tErr(it.error))}</span>` : 'Premiere Pro ' + esc(it.release || relName(it.version))}</td><td></td></tr>`).join('');
         const ok = analysis.items.filter((it) => !it.error);
-        if (!ok.length) return track('analyze_fail', 'not_project'), setStatus('None of these files could be read as Premiere Pro projects.', 'error');
-        if (!fillTargets(Math.min(...ok.map((it) => it.version)))) return track('analyze_fail', 'no_older'), setStatus('These projects are already from the oldest Premiere version we know.', 'error');
+        if (!ok.length) return track('analyze_fail', 'not_project'), setStatus(MSG.notProjects, 'error');
+        if (!fillTargets(Math.min(...ok.map((it) => it.version)))) return track('analyze_fail', 'no_older'), setStatus(MSG.alreadyOldest, 'error');
       }
       const mode = analysis.mode === 'production' ? 'production' : items.length > 1 ? 'batch' : 'single';
       const from = analysis.mode === 'production' ? analysis.version : Math.min(...analysis.items.filter((it) => !it.error).map((it) => it.version));
       track('analyze_ok', `${mode}:${relName(from)}`);
       panel.hidden = false; setStatus('');
-    } catch (err) { track('analyze_fail', 'error'); setStatus(err.message, 'error'); }
+    } catch (err) { track('analyze_fail', 'error'); setStatus(tErr(err.message), 'error'); }
   }
 
   async function convert() {
     if (!analysis) return;
-    btn.disabled = true; setStatus('Converting…', 'busy');
+    btn.disabled = true; setStatus(MSG.converting, 'busy');
     try {
       const target = parseInt(targetEl.value, 10);
       const r = await call('convert', { target });
       download(r.name, r.bytes);
-      let msg = `Done. Open the downloaded ${/\.zip$/.test(r.name) ? 'files' : 'project'} in Premiere Pro ${relName(target)}. Features that only exist in newer versions will not appear.`;
-      if (r.errors?.length) msg += ` ${r.errors.length} file(s) could not be converted: ${r.errors.map((e) => e.path.split('/').pop()).join(', ')}.`;
+      let msg = t(/\.zip$/.test(r.name) ? 'doneFiles' : 'doneProject', { version: relName(target) });
+      if (r.errors?.length) msg += t('partial', { n: r.errors.length, names: r.errors.map((e) => e.path.split('/').pop()).join(', ') });
       const mode = analysis.mode === 'production' ? 'production' : /\.zip$/.test(r.name) ? 'batch' : 'single';
       track('convert_ok', `${mode}:${relName(target)}`);
       if (r.errors?.length) track('convert_fail', 'partial');
       setStatus(msg, r.errors?.length ? 'error' : 'ok');
-    } catch (err) { track('convert_fail', 'error'); setStatus(err.message, 'error'); } finally { btn.disabled = false; }
+    } catch (err) { track('convert_fail', 'error'); setStatus(tErr(err.message), 'error'); } finally { btn.disabled = false; }
   }
 
   drop.addEventListener('click', (e) => { if (e.target.id !== 'pick-folder') input.click(); });

@@ -1,65 +1,65 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{lang}}">
 <head>
 <meta charset="utf-8">
 <!--ROBOTS-->
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{title}}</title>
 <meta name="description" content="{{description}}">
-<link rel="canonical" href="{{canonical}}">
+<link rel="canonical" href="{{canonical}}">{{alternates}}
 <script type="application/ld+json">{{jsonld}}</script>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
 <header class="topbar"><div class="wrap topbar-in">
-  <a class="brand" href="/"><img src="/favicon.svg" alt="" width="22" height="22">OpenOlder</a>
-  <nav class="topnav"><a href="/">Premiere Pro</a><a href="/ableton-12-to-11/">Ableton Live</a><a href="/licenses/">Licenses</a></nav>
+  <a class="brand" href="{{home}}"><img src="/favicon.svg" alt="" width="22" height="22">OpenOlder</a>
+  <nav class="topnav"><a href="{{home}}">Premiere Pro</a><a href="/ableton-12-to-11/">Ableton Live</a><a href="/licenses/">{{t.navLicenses}}</a></nav>
 </div></header>
 
-<section class="hero"><div class="wrap">
+<section class="hero"><div class="wrap">{{langs}}
   <h1>{{h1}}</h1>
   <p class="subtitle">{{subtitle}}</p>
   <div class="tool">
     <div class="convert-row">
-      <span class="pill">.prproj</span><span class="arrow" aria-hidden="true">→</span><span class="pill">older Premiere</span>
+      <span class="pill">.prproj</span><span class="arrow" aria-hidden="true">→</span><span class="pill">{{t.pillOlder}}</span>
     </div>
-    <div id="drop" class="drop" tabindex="0" role="button" aria-label="Choose a .prproj file">
-      <span class="btn-choose">Choose projects</span>
-      <span class="drop-hint">or drop .prproj files, a Production folder or a .zip here · <a href="#" id="pick-folder">choose a folder</a></span>
-      <span class="drop-meta">Your originals are not changed. New copies are downloaded.</span>
+    <div id="drop" class="drop" tabindex="0" role="button" aria-label="{{t.dropAria}}">
+      <span class="btn-choose">{{t.choose}}</span>
+      <span class="drop-hint">{{t.dropHint}} <a href="#" id="pick-folder">{{t.pickFolder}}</a></span>
+      <span class="drop-meta">{{t.dropMeta}}</span>
       <input id="file" type="file" accept=".prproj,.prodset,.zip" multiple hidden>
       <input id="folder" type="file" webkitdirectory hidden>
     </div>
     <p id="status" class="status" role="status" aria-live="polite"></p>
     <div id="result" hidden>
-      <div class="table-wrap"><table class="layers"><thead><tr><th>File</th><th>Saved with</th><th></th></tr></thead><tbody id="items"></tbody></table></div>
+      <div class="table-wrap"><table class="layers"><thead><tr><th>{{t.thFile}}</th><th>{{t.thSaved}}</th><th></th></tr></thead><tbody id="items"></tbody></table></div>
       <div class="actions">
-        <label for="target" class="muted">Open in</label>
+        <label for="target" class="muted">{{t.openIn}}</label>
         <select id="target" class="pill-select"></select>
-        <button id="convert" type="button" class="btn-primary">Convert &amp; download</button>
+        <button id="convert" type="button" class="btn-primary">{{t.convert}}</button>
       </div>
     </div>
   </div>
-  <ul class="trust"><li>Files stay on your device</li><li>No sign-up</li><li>Free</li></ul>
+  <ul class="trust"><li>{{t.trust1}}</li><li>{{t.trust2}}</li><li>{{t.trust3}}</li></ul>
 </div></section>
 
 <main class="wrap content">
   <section class="intro"><p>{{lead}}</p></section>
   {{body}}
-  <section><h2>How to use it</h2><ol class="steps">{{steps}}</ol></section>
+  <section><h2>{{t.howTo}}</h2><ol class="steps">{{steps}}</ol></section>
   {{compare}}
-  <section><h2>Why 2026 projects need more than a version change</h2>
-    <p>The old trick was to unzip the .prproj, lower the version number and zip it again. Premiere Pro 2026 saves projects in a more compact form that leaves out fields older versions require, so that trick now gives a "project is damaged" error. This tool adds those fields back and then sets the version.</p></section>
-  <section><h2>FAQ</h2>{{faq}}</section>
-  <section><h2>Other pages</h2><div class="linkgrid">{{related}}</div></section>
+  <section><h2>{{t.whyH2}}</h2>
+    <p>{{t.whyP}}</p></section>
+  <section><h2>{{t.faq}}</h2>{{faq}}</section>
+  <section><h2>{{t.otherPages}}</h2><div class="linkgrid">{{related}}</div></section>
 </main>
 
 <footer class="footer"><div class="wrap footer-in">
-  <div><a class="brand" href="/"><img src="/favicon.svg" alt="" width="20" height="20">OpenOlder</a></div>
-  <div class="footer-links"><a href="/about/">About</a><a href="/licenses/">Open-source licenses</a></div>
-</div><div class="wrap"><p class="small muted legal">OpenOlder is an independent tool, not affiliated with or endorsed by Adobe. Adobe and Premiere Pro are trademarks of Adobe. Conversion logic based on prem-down by Luis Gómez Gutiérrez (MIT).</p></div></footer>
-<script>window.OPENOLDER_CONFIG = {{config}};</script>
+  <div><a class="brand" href="{{home}}"><img src="/favicon.svg" alt="" width="20" height="20">OpenOlder</a></div>
+  <div class="footer-links"><a href="/about/">{{t.about}}</a><a href="/licenses/">{{t.oss}}</a></div>
+</div><div class="wrap"><p class="small muted legal">{{t.legal}}</p></div></footer>
+<script>window.OPENOLDER_CONFIG = {{config}};</script>{{i18nscript}}
 <script src="/app.js" defer></script>
 </body>
 </html>

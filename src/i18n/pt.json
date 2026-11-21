@@ -1,0 +1,116 @@
+{
+  "lang": "pt-BR",
+  "hreflang": "pt-BR",
+  "path": "pt",
+  "name": "Português",
+  "ui": {
+    "navLicenses": "Licenças",
+    "pillOlder": "Premiere anterior",
+    "dropAria": "Escolher um arquivo .prproj",
+    "choose": "Escolher projetos",
+    "dropHint": "ou arraste para cá arquivos .prproj, uma pasta de Produção ou um .zip ·",
+    "pickFolder": "escolher uma pasta",
+    "dropMeta": "Seus originais não são alterados. Cópias novas são baixadas.",
+    "thFile": "Arquivo",
+    "thSaved": "Salvo em",
+    "openIn": "Abrir no",
+    "convert": "Converter e baixar",
+    "trust1": "Os arquivos ficam no seu dispositivo",
+    "trust2": "Sem cadastro",
+    "trust3": "Grátis",
+    "howTo": "Como usar",
+    "comparison": "Comparação",
+    "whyH2": "Por que projetos do 2026 precisam de mais do que trocar a versão",
+    "whyP": "O truque antigo era descompactar o .prproj, diminuir o número da versão e compactar de novo. O Premiere Pro 2026 salva os projetos em um formato mais compacto, que deixa de fora campos exigidos pelas versões anteriores, então esse truque agora gera o erro de \"projeto danificado\". Esta ferramenta coloca esses campos de volta e depois ajusta a versão.",
+    "faq": "Perguntas frequentes",
+    "otherPages": "Outras páginas",
+    "moreEnglish": "Todas as ferramentas (em inglês)",
+    "about": "Sobre",
+    "oss": "Licenças de código aberto",
+    "legal": "O OpenOlder é uma ferramenta independente, sem vínculo com a Adobe e sem endosso dela. Adobe e Premiere Pro são marcas comerciais da Adobe. A lógica de conversão é baseada no prem-down, de Luis Gómez Gutiérrez (MIT).",
+    "language": "Idioma"
+  },
+  "app": {
+    "readingOne": "Lendo {name}…",
+    "readingMany": "Lendo {n} arquivos…",
+    "production": "Produção",
+    "prodCounts": "{projects} projetos, {other} outros arquivos",
+    "version": "versão {v}",
+    "noOlderProduction": "Não existe versão anterior do Premiere para a qual esta Produção possa ser convertida.",
+    "notProjects": "Nenhum destes arquivos pôde ser lido como projeto do Premiere Pro.",
+    "alreadyOldest": "Estes projetos já são da versão mais antiga do Premiere que conhecemos.",
+    "converting": "Convertendo…",
+    "doneProject": "Pronto. Abra o projeto baixado no Premiere Pro {version}. Recursos que só existem em versões mais novas não vão aparecer.",
+    "doneFiles": "Pronto. Abra os arquivos baixados no Premiere Pro {version}. Recursos que só existem em versões mais novas não vão aparecer.",
+    "partial": " Não foi possível converter {n} arquivo(s): {names}.",
+    "errors": {
+      "This does not look like a Premiere Pro project (.prproj).": "Este arquivo não parece ser um projeto do Premiere Pro (.prproj).",
+      "This file is damaged and could not be decompressed.": "Este arquivo está danificado e não pôde ser descompactado.",
+      "Could not find the project version in this file.": "Não foi possível encontrar a versão do projeto neste arquivo.",
+      "No Premiere Pro project (.prproj) found.": "Nenhum projeto do Premiere Pro (.prproj) foi encontrado.",
+      "These files contain more than one .prodset. Convert one Production at a time.": "Estes arquivos contêm mais de um .prodset. Converta uma Produção de cada vez."
+    }
+  },
+  "pages": {
+    "": {
+      "title": "Abrir projeto do Premiere Pro em versão anterior | OpenOlder",
+      "description": "Converta um projeto (.prproj) ou uma Produção do Premiere Pro para abrir em uma versão anterior, inclusive projetos do Premiere Pro 2026. Grátis, funciona no navegador e nada é enviado.",
+      "h1": "Converter projetos do Premiere Pro para uma versão anterior",
+      "subtitle": "Abra em uma versão anterior do Premiere Pro um projeto salvo em uma versão mais nova, inclusive projetos do 2026. Seus arquivos ficam no seu computador.",
+      "lead": "O Premiere Pro não abre um projeto salvo em uma versão mais nova. Esta ferramenta reescreve uma cópia do projeto para que a versão escolhida consiga abri-lo. Funciona com um projeto, com vários de uma vez e com Produções inteiras.",
+      "steps": [
+        "Arraste um ou mais arquivos .prproj, uma pasta de Produção ou um .zip com eles.",
+        "Escolha a versão do Premiere Pro em que você precisa abrir o projeto.",
+        "Clique em Converter e baixar e abra a nova cópia nessa versão."
+      ],
+      "faq": [
+        ["Meu projeto é enviado para algum servidor?", "Não. A conversão acontece dentro do seu navegador. Seu projeto nunca sai do seu computador."],
+        ["Tudo é mantido?", "A timeline, os clipes, os cortes, os títulos e a maioria dos efeitos, sim. Recursos que só existem na versão mais nova, como as novas máscaras ou a nova ferramenta de texto, não vão aparecer na versão anterior."],
+        ["O projeto original é alterado?", "Não. Você baixa uma cópia nova. Guarde o original."],
+        ["Preciso dos arquivos de mídia?", "Não. Só o arquivo de projeto é convertido. Ao abrir, se o Premiere pedir, indique onde está a sua mídia, como sempre."]
+      ],
+      "updated": "2026-11-21"
+    },
+    "premiere-2026-to-2025": {
+      "title": "Abrir projeto do Premiere Pro 2026 no 2025: conversor grátis | OpenOlder",
+      "description": "O Premiere Pro 2025 diz que o projeto foi salvo em uma versão mais nova? Converta o .prproj do 2026 no navegador e abra no 2025. Grátis, sem instalar nada e sem enviar arquivos.",
+      "h1": "Abrir um projeto do Premiere Pro 2026 no 2025",
+      "subtitle": "Converta um projeto do 2026 para que o Premiere Pro 2025 consiga abri-lo.",
+      "lead": "O Premiere Pro 2026 salva os projetos em um formato mais compacto. As versões anteriores precisam de campos que o 2026 deixa de fora, então só trocar o número da versão gera o erro de \"projeto danificado\". Esta ferramenta coloca esses campos de volta e depois muda a versão para 2025.",
+      "steps": [
+        "Arraste o arquivo .prproj do 2026 (ou vários).",
+        "Deixe \"Premiere Pro 2025\" selecionado.",
+        "Clique em Converter e baixar e abra a nova cópia no Premiere Pro 2025."
+      ],
+      "faq": [
+        ["Por que o velho truque de descompactar e editar a versão não funciona com o 2026?", "Desde o 2026, o arquivo de projeto omite alguns campos obrigatórios. Sem eles, as versões anteriores dizem que o projeto está danificado. Só trocar o número da versão não traz esses campos de volta."],
+        ["O que eu vou perder?", "Tudo o que só existe no 2026, como os novos recursos de máscara e de texto. O resto da edição é mantido."]
+      ],
+      "body": [
+        {
+          "h2": "Por que o 2025 recusa um projeto do 2026",
+          "p": [
+            "Um arquivo `.prproj` é um XML compactado com gzip, e as primeiras linhas registram a versão do projeto. O Premiere Pro confere esse número ao abrir e recusa qualquer projeto mais novo que ele, com a mensagem de que o projeto foi salvo em uma versão mais nova. O Premiere Pro não tem uma opção para salvar em uma versão anterior, então o projeto precisa ser convertido fora dele."
+          ]
+        },
+        {
+          "h2": "O que o conversor altera",
+          "p": [],
+          "list": [
+            "Muda a versão do projeto para a que o Premiere Pro 2025 espera.",
+            "Restaura campos que o 2026 não grava mais, mas que o 2025 ainda exige; sem eles, o 2025 diz que o projeto está danificado.",
+            "Mantém intactos suas sequências, bins, clipes, efeitos e keyframes.",
+            "Grava um arquivo novo com um sufixo no nome. Seu projeto original do 2026 nunca é modificado."
+          ]
+        },
+        {
+          "h2": "Depois de converter",
+          "p": [
+            "Abra a nova cópia no Premiere Pro 2025. Os arquivos de mídia são referenciados, não ficam guardados dentro do projeto, então vincule-os de novo se tiverem mudado de lugar. Efeitos, painéis ou recursos lançados no 2026 podem aparecer como ausentes; tudo o que também existe no 2025 deve abrir normalmente. Continue trabalhando na cópia convertida e guarde o original como backup."
+          ]
+        }
+      ],
+      "updated": "2026-11-21"
+    }
+  }
+}

@@ -1,0 +1,116 @@
+{
+  "lang": "es",
+  "hreflang": "es",
+  "path": "es",
+  "name": "Español",
+  "ui": {
+    "navLicenses": "Licencias",
+    "pillOlder": "Premiere anterior",
+    "dropAria": "Elegir un archivo .prproj",
+    "choose": "Elegir proyectos",
+    "dropHint": "o arrastra aquí archivos .prproj, una carpeta de Producción o un .zip ·",
+    "pickFolder": "elegir una carpeta",
+    "dropMeta": "Tus originales no se modifican. Se descargan copias nuevas.",
+    "thFile": "Archivo",
+    "thSaved": "Guardado con",
+    "openIn": "Abrir en",
+    "convert": "Convertir y descargar",
+    "trust1": "Los archivos no salen de tu equipo",
+    "trust2": "Sin registro",
+    "trust3": "Gratis",
+    "howTo": "Cómo usarlo",
+    "comparison": "Comparación",
+    "whyH2": "Por qué los proyectos de 2026 necesitan algo más que cambiar la versión",
+    "whyP": "El truco de siempre era descomprimir el .prproj, bajar el número de versión y volver a comprimirlo. Premiere Pro 2026 guarda los proyectos en un formato más compacto que omite campos que las versiones anteriores necesitan, así que ese truco ahora provoca el error de \"proyecto dañado\". Esta herramienta vuelve a añadir esos campos y después cambia la versión.",
+    "faq": "Preguntas frecuentes",
+    "otherPages": "Otras páginas",
+    "moreEnglish": "Todas las herramientas (en inglés)",
+    "about": "Acerca de",
+    "oss": "Licencias de código abierto",
+    "legal": "OpenOlder es una herramienta independiente, no está afiliada a Adobe ni cuenta con su respaldo. Adobe y Premiere Pro son marcas comerciales de Adobe. La lógica de conversión se basa en prem-down, de Luis Gómez Gutiérrez (MIT).",
+    "language": "Idioma"
+  },
+  "app": {
+    "readingOne": "Leyendo {name}…",
+    "readingMany": "Leyendo {n} archivos…",
+    "production": "Producción",
+    "prodCounts": "{projects} proyectos, {other} archivos más",
+    "version": "versión {v}",
+    "noOlderProduction": "No hay ninguna versión anterior de Premiere a la que se pueda convertir esta Producción.",
+    "notProjects": "Ninguno de estos archivos se ha podido leer como proyecto de Premiere Pro.",
+    "alreadyOldest": "Estos proyectos ya son de la versión de Premiere más antigua que conocemos.",
+    "converting": "Convirtiendo…",
+    "doneProject": "Listo. Abre el proyecto descargado en Premiere Pro {version}. Las funciones que solo existen en versiones más recientes no aparecerán.",
+    "doneFiles": "Listo. Abre los archivos descargados en Premiere Pro {version}. Las funciones que solo existen en versiones más recientes no aparecerán.",
+    "partial": " No se han podido convertir {n} archivo(s): {names}.",
+    "errors": {
+      "This does not look like a Premiere Pro project (.prproj).": "Este archivo no parece un proyecto de Premiere Pro (.prproj).",
+      "This file is damaged and could not be decompressed.": "Este archivo está dañado y no se ha podido descomprimir.",
+      "Could not find the project version in this file.": "No se ha encontrado la versión del proyecto en este archivo.",
+      "No Premiere Pro project (.prproj) found.": "No se ha encontrado ningún proyecto de Premiere Pro (.prproj).",
+      "These files contain more than one .prodset. Convert one Production at a time.": "Estos archivos contienen más de un .prodset. Convierte una sola Producción cada vez."
+    }
+  },
+  "pages": {
+    "": {
+      "title": "Abrir un proyecto de Premiere Pro en una versión anterior | OpenOlder",
+      "description": "Convierte un proyecto de Premiere Pro (.prproj) o una Producción para abrirlo en una versión anterior, incluidos los proyectos de Premiere Pro 2026. Gratis, en tu navegador y sin subir nada.",
+      "h1": "Convertir proyectos de Premiere Pro a una versión anterior",
+      "subtitle": "Abre en una versión anterior de Premiere Pro un proyecto guardado con una más reciente, incluidos los de 2026. Tus archivos se quedan en tu equipo.",
+      "lead": "Premiere Pro no abre un proyecto guardado con una versión más reciente. Esta herramienta reescribe una copia del proyecto para que la versión que elijas pueda abrirlo. Funciona con un solo proyecto, con varios a la vez y con Producciones completas.",
+      "steps": [
+        "Arrastra uno o varios archivos .prproj, una carpeta de Producción o un .zip con cualquiera de ellos.",
+        "Elige la versión de Premiere Pro en la que necesitas abrirlo.",
+        "Haz clic en Convertir y descargar y abre la nueva copia en esa versión."
+      ],
+      "faq": [
+        ["¿Se sube mi proyecto a algún servidor?", "No. La conversión se hace dentro de tu navegador. Tu proyecto nunca sale de tu equipo."],
+        ["¿Se conserva todo?", "Se conservan la línea de tiempo, los clips, los cortes, los títulos y la mayoría de los efectos. Las funciones que solo existen en la versión más reciente, como las nuevas máscaras o la nueva herramienta de texto, no aparecerán en la versión anterior."],
+        ["¿Se modifica mi proyecto original?", "No. Descargas una copia nueva. Conserva el original."],
+        ["¿Necesito los archivos de medios?", "No. Solo se convierte el archivo de proyecto. Al abrirlo, indica a Premiere dónde están tus medios si te lo pide, como siempre."]
+      ],
+      "updated": "2026-11-21"
+    },
+    "premiere-2026-to-2025": {
+      "title": "Abrir un proyecto de Premiere Pro 2026 en 2025: conversor gratis | OpenOlder",
+      "description": "¿Premiere Pro 2025 dice que el proyecto se guardó con una versión más reciente? Convierte el .prproj de 2026 en tu navegador y ábrelo en 2025. Gratis, sin instalar nada y sin subir archivos.",
+      "h1": "Abrir un proyecto de Premiere Pro 2026 en 2025",
+      "subtitle": "Convierte un proyecto de 2026 para que Premiere Pro 2025 pueda abrirlo.",
+      "lead": "Premiere Pro 2026 guarda los proyectos en un formato más compacto. Las versiones anteriores necesitan campos que 2026 omite, así que cambiar solo el número de versión provoca el error de \"proyecto dañado\". Esta herramienta vuelve a añadir esos campos y después cambia la versión a 2025.",
+      "steps": [
+        "Arrastra el archivo .prproj de 2026 (o varios).",
+        "Deja seleccionado «Premiere Pro 2025».",
+        "Haz clic en Convertir y descargar y abre la nueva copia en Premiere Pro 2025."
+      ],
+      "faq": [
+        ["¿Por qué el truco de siempre (descomprimir y cambiar la versión) ya no funciona con 2026?", "Desde 2026, el archivo de proyecto omite algunos campos obligatorios. Si faltan, las versiones anteriores indican que el proyecto está dañado. Cambiar solo el número de versión no los recupera."],
+        ["¿Qué voy a perder?", "Todo lo que solo existe en 2026, como las nuevas funciones de máscaras o de texto. El resto del montaje se conserva."]
+      ],
+      "body": [
+        {
+          "h2": "Por qué 2025 rechaza un proyecto de 2026",
+          "p": [
+            "Un archivo `.prproj` es XML comprimido con gzip, y sus primeras líneas registran la versión del proyecto. Premiere Pro comprueba ese número al abrirlo y rechaza cualquier proyecto más reciente que él con el aviso de que se guardó con una versión más reciente. Premiere Pro no tiene ninguna opción para guardar en una versión anterior, así que el proyecto se tiene que convertir fuera del programa."
+          ]
+        },
+        {
+          "h2": "Qué cambia el conversor",
+          "p": [],
+          "list": [
+            "Cambia la versión del proyecto a la que espera Premiere Pro 2025.",
+            "Restaura los campos que 2026 ya no escribe pero que 2025 sigue necesitando; sin ellos, 2025 indica que el proyecto está dañado.",
+            "No toca tus secuencias, bandejas, clips, efectos ni fotogramas clave.",
+            "Crea un archivo nuevo con un sufijo en el nombre. Tu proyecto original de 2026 nunca se modifica."
+          ]
+        },
+        {
+          "h2": "Después de convertir",
+          "p": [
+            "Abre la nueva copia en Premiere Pro 2025. Los archivos de medios se enlazan, no se guardan dentro del proyecto, así que vuelve a vincularlos si los has movido. Los efectos, paneles o funciones introducidos en 2026 pueden aparecer como ausentes; todo lo que también existe en 2025 debería abrirse con normalidad. Sigue trabajando en la copia convertida y guarda el original como copia de seguridad."
+          ]
+        }
+      ],
+      "updated": "2026-11-21"
+    }
+  }
+}

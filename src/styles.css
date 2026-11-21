@@ -127,3 +127,9 @@ pre { white-space: pre-wrap; background: var(--bg-soft); padding: 12px; border-r
 .spec th { width: 34%; color: var(--muted); font-weight: 500; }
 .err { color: var(--warn); }
 .drop-hint a { color: var(--link); text-decoration: underline; }
+/* language switcher (translated pilot pages) */
+.langs { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 14px; font-size: .82rem; margin: -18px 0 18px; }
+.langs a { color: var(--muted); }
+.langs span { color: var(--fg); font-weight: 600; }
+@media (max-width: 560px) { .langs { margin-top: -10px; } }
+html:lang(ja) .topnav a:last-child { white-space: nowrap; }
