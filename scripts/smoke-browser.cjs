@@ -85,7 +85,7 @@ fs.writeFileSync(prodZip, Buffer.from(zipSync({
   const st = await p.textContent('#status'); const cell = await p.textContent('#items').catch(() => '');
   check('bad file message', /could not be read|does not look like/i.test(st + cell), (st + ' ' + cell).trim().slice(0, 120));
   // 7. all pages load
-  for (const s of ['/', '/premiere-2026-to-2023/', '/project-saved-in-newer-version/', '/project-could-not-be-loaded-damaged/', '/open-premiere-project-in-older-version/', '/licenses/', '/ableton-12-to-11/']) {
+  for (const s of ['/', '/premiere-27-to-2026/', '/premiere-2026-to-2023/', '/project-saved-in-newer-version/', '/project-could-not-be-loaded-damaged/', '/open-premiere-project-in-older-version/', '/licenses/', '/ableton-12-to-11/']) {
     const res = await p.goto(BASE + s); check('page ' + s, res.status() === 200);
   }
   await b.close(); server.close(); console.log('failures:', fail); process.exit(fail ? 1 : 0);

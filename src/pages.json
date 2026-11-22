@@ -32,6 +32,63 @@
     ]
   },
   {
+    "slug": "premiere-27-to-2026",
+    "title": "Open Premiere 27 Projects in Premiere Pro 2026 (Free, Beta) | OpenOlder",
+    "description": "Premiere Pro 2026 says your project was saved in a newer version? Convert a Premiere 27 (27.x) .prproj in your browser so 2026 or older can open it. Free, nothing uploaded.",
+    "h1": "Open a Premiere 27 Project in Premiere Pro 2026",
+    "subtitle": "Convert a Premiere 27.x project so Premiere Pro 2026 (or an older version) can open it. New support, in beta.",
+    "defaultTarget": 45,
+    "lead": "Premiere 27.0, released in November 2026, saves projects with a newer version number, so Premiere Pro 2026 refuses them with \"This project was saved in a newer version of Adobe Premiere Pro and cannot be opened in this version.\" This tool rewrites a copy of the project for the version you have. Support for 27.x is new: it works on our test projects and is being verified in real Premiere, so keep your original.",
+    "steps": [
+      "Drop the 27.x .prproj file (or several, or a Production folder).",
+      "Keep 'Premiere Pro 2026' selected, or pick an older version.",
+      "Click Convert & download, then open the new copy in your Premiere."
+    ],
+    "faq": [
+      [
+        "Is Premiere 27 the same as Premiere Pro?",
+        "Yes. From version 27.0 Adobe calls the app just Premiere. Help > About shows the version number, for example 27.0."
+      ],
+      [
+        "Is this conversion fully tested?",
+        "Not yet. The 27.x project format is handled as a small step from 2026 and works on our test projects, but it has not yet been confirmed in real Premiere. The tool shows a warning for 27.x projects until it is. Keep the original, and if a converted project does not open, email hello@openolder.com."
+      ],
+      [
+        "Can I go straight to 2025 or older?",
+        "Yes. Pick the version you have. For 2025 and older the tool also restores the fields that 2026 and later leave out of the file."
+      ],
+      [
+        "What will I lose?",
+        "Features that only exist in 27.x. Everything that also exists in your version should come across."
+      ]
+    ],
+    "body": [
+      {
+        "h2": "Why Premiere Pro 2026 refuses a 27.x project",
+        "p": [
+          "A `.prproj` file is gzip-compressed XML with a version number near the top. Premiere checks that number when it opens a project and refuses anything newer than itself. There is no Save As Older Version command, so the project has to be converted outside Premiere. This happens most often when a colleague or client has updated to 27 and you are still on 2026, for example because your computer or your studio's setup is staying on 2026."
+        ]
+      },
+      {
+        "h2": "What the converter changes",
+        "p": [],
+        "list": [
+          "Sets the project version to the one Premiere Pro 2026 (or the version you pick) expects.",
+          "For 2025 and older, restores the fields that 2026 and later no longer write; without them older versions report the project as damaged.",
+          "Leaves sequences, bins, clips, effects and keyframes as they are.",
+          "Writes a new file; the original is never modified, and nothing is uploaded."
+        ]
+      },
+      {
+        "h2": "After converting",
+        "p": [
+          "Open the new copy in your Premiere. Relink media if it has moved. Features introduced in 27.x may be missing. Because 27.x support is still in beta, check the edit before you rely on it, keep working in the converted copy and keep the original as a backup."
+        ]
+      }
+    ],
+    "updated": "2026-11-22"
+  },
+  {
     "slug": "premiere-2026-to-2025",
     "title": "Open Premiere Pro 2026 Projects in 2025: Free Converter | OpenOlder",
     "description": "Premiere Pro 2025 says your project was saved in a newer version? Convert the 2026 .prproj in your browser and open it in 2025. Free, no install, nothing uploaded.",
