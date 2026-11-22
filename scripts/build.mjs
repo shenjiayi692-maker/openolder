@@ -38,6 +38,7 @@ const EN_UI = {
   navLicenses: 'Licenses', pillOlder: 'older Premiere', dropAria: 'Choose a .prproj file', choose: 'Choose projects',
   dropHint: 'or drop .prproj files, a Production folder or a .zip here ·', pickFolder: 'choose a folder',
   dropMeta: 'Your originals are not changed. New copies are downloaded.', thFile: 'File', thSaved: 'Saved with', openIn: 'Open in',
+  batchHint: 'Checking many projects? Drop them all at once to see which Premiere version saved each one, without converting anything.', csv: 'Download this list as CSV',
   convert: 'Convert & download', trust1: 'Files stay on your device', trust2: 'No sign-up', trust3: 'Free', howTo: 'How to use it',
   comparison: 'Comparison', whyH2: 'Why 2026 projects need more than a version change',
   whyP: 'The old trick was to unzip the .prproj, lower the version number and zip it again. Premiere Pro 2026 saves projects in a more compact form that leaves out fields older versions require, so that trick now gives a "project is damaged" error. This tool adds those fields back and then sets the version.',

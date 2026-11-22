@@ -4,7 +4,7 @@
 // stored, and nothing can identify a visitor.
 const SITES = {
   'geounpack.com': ['engine_fail', 'open_ok', 'open_fail', 'preview_fail', 'export_ok', 'export_fail', 'crash'],
-  'openolder.com': ['analyze_ok', 'analyze_fail', 'convert_ok', 'convert_fail', 'als_ok', 'als_fail', 'als_convert_ok', 'als_convert_fail'],
+  'openolder.com': ['analyze_ok', 'analyze_fail', 'convert_ok', 'convert_fail', 'als_ok', 'als_fail', 'als_convert_ok', 'als_convert_fail', 'versions_csv'],
 };
 const clean = (s, max) => String(s || '').toLowerCase().replace(/[^a-z0-9_.:/-]+/g, '').slice(0, max);
 

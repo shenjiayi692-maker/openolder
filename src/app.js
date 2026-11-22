@@ -80,6 +80,7 @@
       const from = analysis.mode === 'production' ? analysis.version : Math.min(...analysis.items.filter((it) => !it.error).map((it) => it.version));
       track('analyze_ok', `${mode}:${relName(from)}`);
       panel.hidden = false;
+      $('#batch').hidden = analysis.mode === 'production';
       // A release newer than the newest one we know (e.g. Premiere 27): may have changed the format again.
       const newest = 46; // newest release verified in real Premiere (27, verified 2026-11-22)
       const maxSeen = analysis.mode === 'production' ? analysis.version : Math.max(...analysis.items.filter((it) => !it.error).map((it) => it.version));
@@ -116,4 +117,14 @@
     else handle([...e.dataTransfer.files].map((f) => ({ path: f.name, file: f })));
   });
   btn.addEventListener('click', convert);
+  // Version list as CSV (file, saved with, status). Opens in Excel; a BOM keeps accents readable.
+  $('#csv').addEventListener('click', () => {
+    if (!analysis || analysis.mode === 'production') return;
+    const q = (v) => `"${String(v).replace(/"/g, '""')}"`;
+    const rows = [['file', 'saved_with', 'project_version', 'status']].concat(analysis.items.map((it) => [
+      it.path, it.error ? 'unknown' : `Premiere ${it.release || relName(it.version)}`, it.error ? '' : it.version, it.error ? tErr(it.error) : 'ok',
+    ]));
+    download('premiere_project_versions.csv', new TextEncoder().encode('\ufeff' + rows.map((r) => r.map(q).join(',')).join('\r\n') + '\r\n'));
+    track('versions_csv', `n${Math.min(analysis.items.length, 50)}`);
+  });
 })();

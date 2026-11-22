@@ -133,3 +133,4 @@ pre { white-space: pre-wrap; background: var(--bg-soft); padding: 12px; border-r
 .langs span { color: var(--fg); font-weight: 600; }
 @media (max-width: 560px) { .langs { margin-top: -10px; } }
 html:lang(ja) .topnav a:last-child { white-space: nowrap; }
+.batch-hint { margin: 12px 0 0; }

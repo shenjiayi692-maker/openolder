@@ -28,7 +28,9 @@
     "about": "Acerca de",
     "oss": "Licencias de código abierto",
     "legal": "OpenOlder es una herramienta independiente, no está afiliada a Adobe ni cuenta con su respaldo. Adobe y Premiere Pro son marcas comerciales de Adobe. La lógica de conversión se basa en prem-down, de Luis Gómez Gutiérrez (MIT).",
-    "language": "Idioma"
+    "language": "Idioma",
+    "batchHint": "¿Tienes que revisar muchos proyectos? Suéltalos todos a la vez para ver con qué versión de Premiere se guardó cada uno, sin convertir nada.",
+    "csv": "Descargar esta lista en CSV"
   },
   "app": {
     "readingOne": "Leyendo {name}…",
