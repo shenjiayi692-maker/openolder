@@ -16,7 +16,7 @@
   const $ = (s) => document.querySelector(s);
   const drop = $('#drop'), input = $('#file'), folderInput = $('#folder'), status = $('#status');
   const panel = $('#result'), list = $('#items'), targetEl = $('#target'), btn = $('#convert');
-  const RELEASES = [[38, '2020.1'], [39, '2021'], [40, '2022'], [41, '2023'], [42, '2024'], [43, '2025'], [45, '2026']];
+  const RELEASES = [[38, '2020.1'], [39, '2021'], [40, '2022'], [41, '2023'], [42, '2024'], [43, '2025'], [45, '2026'], [46, '27']];
   const RELEASES_ALL = [[22, 'CS4'], [23, 'CS5'], [24, 'CS5.5'], [25, 'CS6'], [26, 'CC'], [27, '2014'], [28, '2014.1'], [29, '2015'], [30, '2015.1'], [32, '2017'], [33, '2018'], [34, '2018.1'], [35, '2019'], [36, '2019.1'], [37, '2020'], ...RELEASES];
 
   const worker = new Worker('/worker.js', { type: 'module' });
@@ -81,7 +81,7 @@
       track('analyze_ok', `${mode}:${relName(from)}`);
       panel.hidden = false;
       // A release newer than the newest one we know (e.g. Premiere 27): may have changed the format again.
-      const newest = Math.max(...RELEASES_ALL.map(([v]) => v));
+      const newest = 45; // newest release verified in real Premiere; 27 (46) not verified yet
       const maxSeen = analysis.mode === 'production' ? analysis.version : Math.max(...analysis.items.filter((it) => !it.error).map((it) => it.version));
       setStatus(maxSeen > newest ? MSG.untested : '', maxSeen > newest ? 'error' : '');
     } catch (err) { track('analyze_fail', 'error'); setStatus(tErr(err.message), 'error'); }
