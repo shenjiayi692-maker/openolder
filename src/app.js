@@ -9,7 +9,7 @@
     converting: 'Converting…', doneProject: 'Done. Open the downloaded project in Premiere Pro {version}. Features that only exist in newer versions will not appear.',
     doneFiles: 'Done. Open the downloaded files in Premiere Pro {version}. Features that only exist in newer versions will not appear.',
     partial: ' {n} file(s) could not be converted: {names}.', errors: {},
-    untested: 'This project was saved by a Premiere release newer than 2026 (probably Premiere 27). Converting it has not been tested yet, so the result may not open. Keep the original. If it fails, email hello@openolder.com: support for the new release is being added.',
+    untested: 'This project was saved by a Premiere release newer than Premiere 27. Converting it has not been tested yet, so the result may not open. Keep the original. If it fails, email hello@openolder.com: support for the new release is being added.',
   }, window.OPENOLDER_I18N || {});
   const t = (k, v) => MSG[k].replace(/\{(\w+)\}/g, (_, n) => v[n]);
   const tErr = (m) => MSG.errors[m] || m;
@@ -81,7 +81,7 @@
       track('analyze_ok', `${mode}:${relName(from)}`);
       panel.hidden = false;
       // A release newer than the newest one we know (e.g. Premiere 27): may have changed the format again.
-      const newest = 45; // newest release verified in real Premiere; 27 (46) not verified yet
+      const newest = 46; // newest release verified in real Premiere (27, verified 2026-11-22)
       const maxSeen = analysis.mode === 'production' ? analysis.version : Math.max(...analysis.items.filter((it) => !it.error).map((it) => it.version));
       setStatus(maxSeen > newest ? MSG.untested : '', maxSeen > newest ? 'error' : '');
     } catch (err) { track('analyze_fail', 'error'); setStatus(tErr(err.message), 'error'); }

@@ -50,7 +50,7 @@
       "No Premiere Pro project (.prproj) found.": "Premiere Pro のプロジェクト（.prproj）が見つかりません。",
       "These files contain more than one .prodset. Convert one Production at a time.": ".prodset が複数含まれています。プロダクションは 1 つずつ変換してください。"
     },
-    "untested": "このプロジェクトは 2026 より新しい Premiere（おそらく Premiere 27）で保存されています。この変換はまだ検証されていないため、変換後のファイルが開けない可能性があります。元のファイルは必ず残してください。うまくいかない場合は hello@openolder.com までご連絡ください。新バージョンへの対応を進めています。"
+    "untested": "このプロジェクトは Premiere 27 より新しいバージョンの Premiereで保存されています。この変換はまだ検証されていないため、変換後のファイルが開けない可能性があります。元のファイルは必ず残してください。うまくいかない場合は hello@openolder.com までご連絡ください。新バージョンへの対応を進めています。"
   },
   "pages": {
     "": {
