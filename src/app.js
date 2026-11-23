@@ -62,6 +62,27 @@
     return opts.length;
   }
 
+  // For diagnosing failed reads without knowing the file: its extension, what its first bytes say it is, and a size range.
+  async function describe(it) {
+    const f = it && it.file;
+    if (!f) return 'none:none:none';
+    const m = /\.([a-z0-9]{1,8})$/i.exec(f.name || ''); const ext = m ? m[1].toLowerCase() : 'none';
+    let sig = 'unread';
+    try {
+      const b = new Uint8Array(await f.slice(0, 8).arrayBuffer());
+      const s = (x) => x.every((v, i) => b[i] === v);
+      sig = !b.length ? 'empty' : s([0x1f, 0x8b]) ? 'gzip' : s([0x50, 0x4b]) ? 'zip' : s([0x37, 0x7a, 0xbc, 0xaf]) ? '7z'
+        : (s([0x3c]) || s([0xef, 0xbb, 0xbf, 0x3c]) || s([0xff, 0xfe]) || s([0x7b])) ? 'xml' : s([0x25, 0x50, 0x44, 0x46]) ? 'pdf' : 'other';
+    } catch (_) { /* keep 'unread' */ }
+    const mb = f.size / 1e6;
+    const size = mb < 1 ? 'lt1mb' : mb < 10 ? '1-10mb' : mb < 50 ? '10-50mb' : 'gt50mb';
+    return `${ext}:${sig}:${size}`;
+  }
+  const failedItem = (items, analysis) => {
+    const bad = analysis && analysis.items ? analysis.items.find((x) => x.error) : null;
+    return (bad && items.find((x) => x.path === bad.path)) || items[0];
+  };
+
   async function handle(items) {
     if (!items.length) return;
     panel.hidden = true; setStatus(items.length === 1 ? t('readingOne', { name: items[0].path }) : t('readingMany', { n: items.length }), 'busy');
@@ -73,7 +94,7 @@
       } else {
         list.innerHTML = analysis.items.map((it) => `<tr><td class="lname">${esc(it.path.split('/').pop())}</td><td>${it.error ? `<span class="err">${esc(tErr(it.error))}</span>` : 'Premiere Pro ' + esc(it.release || relName(it.version))}</td><td></td></tr>`).join('');
         const ok = analysis.items.filter((it) => !it.error);
-        if (!ok.length) return track('analyze_fail', 'not_project'), setStatus(MSG.notProjects, 'error');
+        if (!ok.length) { track('analyze_fail', `not_project:${await describe(failedItem(items, analysis))}`); return setStatus(MSG.notProjects, 'error'); }
         if (!fillTargets(Math.min(...ok.map((it) => it.version)))) return track('analyze_fail', 'no_older'), setStatus(MSG.alreadyOldest, 'error');
       }
       const mode = analysis.mode === 'production' ? 'production' : items.length > 1 ? 'batch' : 'single';
@@ -85,7 +106,7 @@
       const newest = 46; // newest release verified in real Premiere (27, verified 2026-11-22)
       const maxSeen = analysis.mode === 'production' ? analysis.version : Math.max(...analysis.items.filter((it) => !it.error).map((it) => it.version));
       setStatus(maxSeen > newest ? MSG.untested : '', maxSeen > newest ? 'error' : '');
-    } catch (err) { track('analyze_fail', 'error'); setStatus(tErr(err.message), 'error'); }
+    } catch (err) { track('analyze_fail', `error:${await describe(items[0])}`); setStatus(tErr(err.message), 'error'); }
   }
 
   async function convert() {

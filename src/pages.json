@@ -304,11 +304,19 @@
       {
         "h2": "When the project really is damaged",
         "p": [
-          "The same message has other causes. Adobe Community threads going back to 2011 link it to crashes or power cuts while saving, project folders that were moved or renamed, and Creative Cloud Libraries elements. Restoring fields does not help in those cases, and a file that is cut short cannot be read at all. Look in the `Adobe Premiere Pro Auto-Save` folder for an earlier copy, restore a backup, or import the old project's sequences into a new project."
+          "The same message has other causes. Adobe Community threads going back to 2011 link it to crashes or power cuts while saving, project folders that were moved or renamed, and Creative Cloud Libraries elements. If the project was never edited by hand, or you get the error in the same version that saved it, the file itself is damaged. This tool cannot repair that: restoring fields only helps 2026 projects whose version number was lowered, and a file that is cut short cannot be read at all.",
+          "Your best chance is an Auto-Save copy. Premiere saves time-stamped copies of the project in the background, and Adobe's crash-recovery help points to the Auto-Save folder inside your project folder. If it is not there, open Preferences > Auto Save in Premiere to see where your copies are saved."
+        ],
+        "list": [
+          "In Premiere, choose File > Open Project and go to the Auto-Save folder.",
+          "Open the newest copy from before the problem started (the time is in the file name).",
+          "If it opens, save it under a new name with File > Save As, and keep the damaged file aside.",
+          "No usable copy? Restore a backup, or create a new project and import the sequences from the old one with File > Import.",
+          "If the Auto-Save folder is empty, auto-save may be turned off: switch it on in Preferences > Auto Save so it can help next time."
         ]
       }
     ],
-    "updated": "2026-11-21"
+    "updated": "2026-11-23"
   },
   {
     "slug": "open-premiere-project-in-older-version",
