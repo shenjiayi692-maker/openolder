@@ -1,6 +1,7 @@
 # OpenOlder — instructions for Claude Code
 
-Owner: Jiayi (reply in Chinese, plain language; she is not a developer). Sister project: `shenjiayi692-maker/geounpack` — its `docs/HANDOFF.md` and `docs/research/` hold the overall plan (06-demo-vs-full-plans.md part 1 = Premiere, part 3 = Ableton).
+Owner: Jiayi (reply in Chinese, plain language; she is not a developer).
+Before starting any work, read `docs/TODO.md` — the single open-items list for this site. When you finish or change an item, update its status and date there in the same commit. Strategy, keyword scanning and candidate ideas live in Jiayi's handbook (a Claude doc), not in this repo. Sister project: `shenjiayi692-maker/geounpack` — its `docs/HANDOFF.md` and `docs/research/` hold the overall plan (06-demo-vs-full-plans.md part 1 = Premiere, part 3 = Ableton).
 
 ## Rules
 - All processing client-side; never upload user files.
