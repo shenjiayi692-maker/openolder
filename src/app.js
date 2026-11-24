@@ -8,7 +8,7 @@
     notProjects: 'None of these files could be read as Premiere Pro projects.', alreadyOldest: 'These projects are already from the oldest Premiere version we know.',
     converting: 'Converting…', doneProject: 'Done. Open the downloaded project in Premiere Pro {version}. Features that only exist in newer versions will not appear.',
     doneFiles: 'Done. Open the downloaded files in Premiere Pro {version}. Features that only exist in newer versions will not appear.',
-    partial: ' {n} file(s) could not be converted: {names}.', errors: {},
+    partial: ' {n} file(s) could not be converted: {names}.', errors: {}, sendFile: 'Email us the file',
     untested: 'This project was saved by a Premiere release newer than Premiere 27. Converting it has not been tested yet, so the result may not open. Keep the original. If it fails, email hello@openolder.com: support for the new release is being added.',
   }, window.OPENOLDER_I18N || {});
   const t = (k, v) => MSG[k].replace(/\{(\w+)\}/g, (_, n) => v[n]);
@@ -24,6 +24,14 @@
   worker.onmessage = (e) => { const p = pending.get(e.data.id); if (!p) return; pending.delete(e.data.id); e.data.ok ? p.resolve(e.data.result) : p.reject(new Error(e.data.error)); };
   const call = (type, payload) => new Promise((resolve, reject) => { const id = ++reqId; pending.set(id, { resolve, reject }); worker.postMessage({ id, type, payload }); });
   const setStatus = (m, k) => { status.textContent = m; status.className = 'status ' + (k || ''); };
+  // After an error, a mail link with a fixed subject tag so real reports stand out from sales email.
+  const addReportLink = (detail) => {
+    const a = document.createElement('a');
+    const body = `Hi,\n\nThis project did not work in OpenOlder (${location.pathname}).\nWhat it said: ${detail}\nPremiere version that saved it (if known):\nVersion I need to open it in:\n\nI have attached the .prproj (it contains no media, only the edit), or: I can't share it.\n\n`;
+    a.href = `mailto:hello@openolder.com?subject=${encodeURIComponent('[OpenOlder feedback] Project that does not convert')}&body=${encodeURIComponent(body)}`;
+    a.textContent = MSG.sendFile;
+    status.append(' ', a);
+  };
   // Anonymous usage count (see functions/api/e.js): event name and a short category only.
   const track = (e, d) => { try { navigator.sendBeacon('/api/e', JSON.stringify({ e, d: d || '', p: location.pathname })); } catch (_) { /* ignore */ } };
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -94,7 +102,7 @@
       } else {
         list.innerHTML = analysis.items.map((it) => `<tr><td class="lname">${esc(it.path.split('/').pop())}</td><td>${it.error ? `<span class="err">${esc(tErr(it.error))}</span>` : 'Premiere Pro ' + esc(it.release || relName(it.version))}</td><td></td></tr>`).join('');
         const ok = analysis.items.filter((it) => !it.error);
-        if (!ok.length) { track('analyze_fail', `not_project:${await describe(failedItem(items, analysis))}`); return setStatus(MSG.notProjects, 'error'); }
+        if (!ok.length) { track('analyze_fail', `not_project:${await describe(failedItem(items, analysis))}`); setStatus(MSG.notProjects, 'error'); return addReportLink(MSG.notProjects); }
         if (!fillTargets(Math.min(...ok.map((it) => it.version)))) return track('analyze_fail', 'no_older'), setStatus(MSG.alreadyOldest, 'error');
       }
       const mode = analysis.mode === 'production' ? 'production' : items.length > 1 ? 'batch' : 'single';
@@ -106,7 +114,8 @@
       const newest = 46; // newest release verified in real Premiere (27, verified 2026-11-22)
       const maxSeen = analysis.mode === 'production' ? analysis.version : Math.max(...analysis.items.filter((it) => !it.error).map((it) => it.version));
       setStatus(maxSeen > newest ? MSG.untested : '', maxSeen > newest ? 'error' : '');
-    } catch (err) { track('analyze_fail', `error:${await describe(items[0])}`); setStatus(tErr(err.message), 'error'); }
+      if (maxSeen > newest) addReportLink(`project version ${maxSeen}`);
+    } catch (err) { track('analyze_fail', `error:${await describe(items[0])}`); setStatus(tErr(err.message), 'error'); addReportLink(err.message); }
   }
 
   async function convert() {
@@ -122,7 +131,8 @@
       track('convert_ok', `${mode}:${relName(target)}`);
       if (r.errors?.length) track('convert_fail', 'partial');
       setStatus(msg, r.errors?.length ? 'error' : 'ok');
-    } catch (err) { track('convert_fail', 'error'); setStatus(tErr(err.message), 'error'); } finally { btn.disabled = false; }
+      if (r.errors?.length) addReportLink(r.errors.map((e) => tErr(e.error || '')).join('; '));
+    } catch (err) { track('convert_fail', 'error'); setStatus(tErr(err.message), 'error'); addReportLink(err.message); } finally { btn.disabled = false; }
   }
 
   drop.addEventListener('click', (e) => { if (e.target.id !== 'pick-folder') input.click(); });

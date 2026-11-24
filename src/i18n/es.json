@@ -30,7 +30,9 @@
     "legal": "OpenOlder es una herramienta independiente, no está afiliada a Adobe ni cuenta con su respaldo. Adobe y Premiere Pro son marcas comerciales de Adobe. La lógica de conversión se basa en prem-down, de Luis Gómez Gutiérrez (MIT).",
     "language": "Idioma",
     "batchHint": "¿Tienes que revisar muchos proyectos? Suéltalos todos a la vez para ver con qué versión de Premiere se guardó cada uno, sin convertir nada.",
-    "csv": "Descargar esta lista en CSV"
+    "csv": "Descargar esta lista en CSV",
+    "reportPre": "¿Un proyecto que no se abre o no se convierte?",
+    "reportLink": "Avísanos"
   },
   "app": {
     "readingOne": "Leyendo {name}…",
@@ -52,7 +54,8 @@
       "No Premiere Pro project (.prproj) found.": "No se ha encontrado ningún proyecto de Premiere Pro (.prproj).",
       "These files contain more than one .prodset. Convert one Production at a time.": "Estos archivos contienen más de un .prodset. Convierte una sola Producción cada vez."
     },
-    "untested": "Este proyecto se guardó con una versión de Premiere posterior a Premiere 27. Su conversión aún no se ha probado, así que el resultado podría no abrirse. Conserva el original. Si falla, escribe a hello@openolder.com: estamos añadiendo compatibilidad con la nueva versión."
+    "untested": "Este proyecto se guardó con una versión de Premiere posterior a Premiere 27. Su conversión aún no se ha probado, así que el resultado podría no abrirse. Conserva el original. Si falla, escribe a hello@openolder.com: estamos añadiendo compatibilidad con la nueva versión.",
+    "sendFile": "Envíanos el archivo"
   },
   "pages": {
     "": {
