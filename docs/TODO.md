@@ -25,6 +25,8 @@
 - 日期：2026-11-24 记录
 
 ## 最近完成
+- 2026-11-25 用 IndexNow 把站点地图里全部 20 个网址推送给 Bing（经浏览器 GET 推送，抽查 premiere-27-to-2026 返回 200）。
+- 2026-11-25 推广：VideoHelp 提交表单已在 Chrome 填好，等 Jiayi 点 Submit；SaaSHub 要求真人提交，交给 Jiayi（文案见 geounpack 仓库 docs/promotion/openolder/directories.md 顶部状态说明）。AlternativeTo 11-15 已提交，在审核队列。
 - 2026-11-24 决定（Jiayi）：暂不加 Google Analytics / Clarity（会用 Cookie，要改隐私页并征得欧盟用户同意）。访问量继续看 Cloudflare Web Analytics，工具使用看 D1。以后要加，连同隐私页和同意提示一起改。
 - 2026-11-24 工具下方新增“项目打不开或转换不了？告诉我们”，失败时也附“Email us the file”链接，主题带 `[OpenOlder feedback]`，4 种语言（2d80c4d）。
 - 2026-11-23 分析失败时记录扩展名、文件头和大小；“工程可能已损坏”页加 Auto-Save 恢复步骤（da7a28c）。
