@@ -24,9 +24,29 @@
 - 下一步：用真实的 Live 12 工程转换，再在 Live 11 里打开验证（试用版、朋友，或在 r/ableton 找人帮忙）。验证通过前，页面上保留 beta 说明。
 - 日期：2026-11-24 记录
 
+### 4. 上传第一条 YouTube 视频（Premiere 27 → 2026）
+- 状态：横屏和竖屏成片都已做好（11-26），授权和音乐署名都已备齐。
+- 下一步：Jiayi 在 Studio 确认是 Jiayi Builds Tools，把横屏文件拖进上传窗口；Claude 按 `docs/promotion/premiere27-drafts.md` 第 2 节顶部的**最终版简介**填标题、简介、标签，停在“发布”前。发完再传 Shorts（链接放置顶评论）。
+- 注意：Claude 在 Chrome 里传不了自己做的视频（超过 3.8MB，而且不是 Jiayi 发来的文件），上传这一步只能 Jiayi 来。
+- 日期：2026-11-27 记录
+
+### 5. 目录站收录
+- AlternativeTo：11-15 已提交，在审核队列（Gmail 有提醒），不要重复提交。
+- VideoHelp：11-25 表单已填好，Jiayi 已提交，等审核（官方说可能要几周）。
+- SaaSHub：要 Jiayi 自己注册、自己填（提交页要求 AI 代理让真人提交）。填法见 `docs/promotion/directories.md` 顶部状态说明；联系邮箱用 hello@openolder.com，竞品至少填一个。
+- 下一步：12 月中查一次三家有没有通过；通过后把链接记到这里。
+- 日期：2026-11-27 记录
+
+### 6. 部署分支落后于 main（只差文档）
+- 证据：11-25 把 TODO 推到了 main，推送到部署分支 demo-v0.1 时被拦下。
+- 下一步：下次改网站代码、推 demo-v0.1 时顺带合并 main；只是文档，不影响网站。
+- 日期：2026-11-27 记录
+
 ## 最近完成
+- 2026-11-27 推广文档从 geounpack 仓库搬到本仓库 `docs/promotion/`（directories、forum-answers、premiere27-drafts、social-posts、youtube-scripts）。geounpack 那边已删掉旧副本。
+- 2026-11-26 第一条 YouTube 视频（Premiere 27 → 2026，42 秒）做好横屏和竖屏两版，配音、字幕、背景音乐齐全。
 - 2026-11-25 用 IndexNow 把站点地图里全部 20 个网址推送给 Bing（经浏览器 GET 推送，抽查 premiere-27-to-2026 返回 200）。
-- 2026-11-25 推广：VideoHelp 提交表单已在 Chrome 填好，等 Jiayi 点 Submit；SaaSHub 要求真人提交，交给 Jiayi（文案见 geounpack 仓库 docs/promotion/openolder/directories.md 顶部状态说明）。AlternativeTo 11-15 已提交，在审核队列。
+- 2026-11-25 推广：VideoHelp 提交表单已在 Chrome 填好，等 Jiayi 点 Submit；SaaSHub 要求真人提交，交给 Jiayi（文案见 docs/promotion/directories.md 顶部状态说明）。AlternativeTo 11-15 已提交，在审核队列。
 - 2026-11-24 决定（Jiayi）：暂不加 Google Analytics / Clarity（会用 Cookie，要改隐私页并征得欧盟用户同意）。访问量继续看 Cloudflare Web Analytics，工具使用看 D1。以后要加，连同隐私页和同意提示一起改。
 - 2026-11-24 工具下方新增“项目打不开或转换不了？告诉我们”，失败时也附“Email us the file”链接，主题带 `[OpenOlder feedback]`，4 种语言（2d80c4d）。
 - 2026-11-23 分析失败时记录扩展名、文件头和大小；“工程可能已损坏”页加 Auto-Save 恢复步骤（da7a28c）。
