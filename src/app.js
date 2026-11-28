@@ -118,7 +118,14 @@
       } else {
         list.innerHTML = analysis.items.map((it) => `<tr><td class="lname">${esc(it.path.split('/').pop())}</td><td>${it.error ? `<span class="err">${esc(tErr(it.error))}</span>` : 'Premiere Pro ' + esc(it.release || relName(it.version))}</td><td></td></tr>`).join('');
         const ok = analysis.items.filter((it) => !it.error);
-        if (!ok.length) { track('analyze_fail', `not_project:${await describe(failedItem(items, analysis))}`); setStatus(MSG.notProjects, 'error'); return addReportLink(MSG.notProjects); }
+        if (!ok.length) {
+          const first = analysis.items[0];
+          const code = ['gzip', 'no-version', 'not-premiere'].includes(first.code) ? first.code : 'read';
+          track('analyze_fail', `${code}:${await describe(failedItem(items, analysis))}`);
+          const message = analysis.items.length === 1 ? tErr(first.error) : MSG.notProjects;
+          setStatus(message, 'error');
+          return addReportLink(message);
+        }
         if (!fillTargets(Math.min(...ok.map((it) => it.version)))) return track('analyze_fail', 'no_older'), setStatus(MSG.alreadyOldest, 'error');
       }
       const mode = analysis.mode === 'production' ? 'production' : items.length > 1 ? 'batch' : 'single';

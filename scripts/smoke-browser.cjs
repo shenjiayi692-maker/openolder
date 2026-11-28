@@ -84,6 +84,19 @@ fs.writeFileSync(prodZip, Buffer.from(zipSync({
   await p.setInputFiles('#file', bad); await p.waitForTimeout(2000);
   const st = await p.textContent('#status'); const cell = await p.textContent('#items').catch(() => '');
   check('bad file message', /could not be read|does not look like/i.test(st + cell), (st + ' ' + cell).trim().slice(0, 120));
+  if (!process.env.BASE_URL) {
+    for (const [reason, buffer, message] of [
+      ['gzip', Buffer.from([0x1f, 0x8b, 0]), 'could not be decompressed'],
+      ['no-version', zlib.gzipSync('<PremiereData/>'), 'Could not find the project version'],
+      ['not-premiere', zlib.gzipSync('<other/>'), 'does not look like'],
+    ]) {
+      const event = p.waitForRequest(req => req.url().endsWith('/api/e') && req.postData()?.includes('analyze_fail'));
+      await p.setInputFiles('#file', { name: 'sample.prproj', mimeType: 'application/octet-stream', buffer });
+      const detail = JSON.parse((await event).postData()).d;
+      check('visible error and diagnostic ' + reason, (await p.textContent('#status')).includes(message) &&
+        detail === reason + ':prproj:gzip:lt1mb', detail);
+    }
+  }
   // 7. all pages load
   for (const s of ['/', '/premiere-27-to-2026/', '/premiere-2026-to-2023/', '/project-saved-in-newer-version/', '/project-could-not-be-loaded-damaged/', '/open-premiere-project-in-older-version/', '/licenses/', '/ableton-12-to-11/']) {
     const res = await p.goto(BASE + s); check('page ' + s, res.status() === 200);

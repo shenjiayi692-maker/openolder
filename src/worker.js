@@ -31,7 +31,7 @@ function analyse(files) {
   if (prodset.length > 1) throw new Error('These files contain more than one .prodset. Convert one Production at a time.');
   const projects = files.filter((f) => isProj(f.path));
   if (!projects.length) throw new Error('No Premiere Pro project (.prproj) found.');
-  return { mode: 'projects', items: projects.map((f) => { try { const i = inspect(f.bytes); return { path: f.path, version: i.version, release: i.release }; } catch (e) { return { path: f.path, error: e.message }; } }) };
+  return { mode: 'projects', items: projects.map((f) => { try { const i = inspect(f.bytes); return { path: f.path, version: i.version, release: i.release }; } catch (e) { return { path: f.path, error: e.message, code: e.code || 'read' }; } }) };
 }
 
 let cache = null;

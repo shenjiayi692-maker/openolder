@@ -2,8 +2,9 @@
 // SITE_URL sets canonical links and the sitemap (default https://openolder.pages.dev).
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dist = path.join(root, 'dist');
 const src = path.join(root, 'src');
 const NOINDEX = process.env.NOINDEX !== '0';
