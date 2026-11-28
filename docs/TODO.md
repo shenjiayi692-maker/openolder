@@ -36,7 +36,7 @@
 - 日期：2026-11-27 记录
 
 ## 最近完成
-- 2026-11-28 单项读取失败显示具体错误，D1 记录原因及输入特征。线上验收计划在 /premiere-27-to-2026/ 使用一个正常 Premiere 27 工程及一个损坏 gzip，小于 1 MB，各一次。
+- 2026-11-28 单项读取失败显示具体错误，D1 记录原因及输入特征。北京时间 14:52 在 /premiere-27-to-2026/ 验收通过：正常 Premiere 27 样本下载成功，解压核对工程版本为 45（2026）；损坏 gzip 显示无法解压。D1 当日 analyze_ok single:27 从 1 到 2，convert_ok single:2026 从 2 到 3，analyze_fail gzip:prproj:gzip:lt1mb 从 0 到 1。复盘时三项各扣除一次自测。
 - 2026-11-28 大项目修复：11-25 至 11-27 /premiere-27-to-2026/ 上 5 次“不是工程文件”（gzip、10 MB 以上）和 3 次转换出错，原因是大项目解压后超过浏览器字符串上限（约 5.4 亿字符，项目压缩率约 14 倍）。现在识别版本只解压开头；只改版本号的转换（27→2026 等）边解压边压缩，6 亿字符的模拟项目 27 秒转完；转到 2025 及更早仍要整体处理，太大时给出说明而不是报错；转换引擎崩溃时页面不再卡住。统计里转换失败细分为 too_large / crash / damaged / error，新增 crash 事件。
 - 2026-11-28 合并 main 到部署分支 demo-v0.1：推广文档和 11-25 至 11-28 的 TODO 记录进入部署分支，两边重新一致（原待办第 6 项）。
 - 2026-11-27 About 页加了一行“Other tools by the same developer: Find Shutter Count …”，链接 https://findshuttercount.com/（正常 follow 链接，带 title）。只此一处，单向（findshuttercount 不回链），不是站群互链。测试：npm test 27/27，smoke-browser 与 smoke-ableton failures: 0；Ableton 页没动。
