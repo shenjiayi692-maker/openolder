@@ -27,7 +27,7 @@
 ### 4. Shorts 置顶评论
 - 状态：横屏视频 11-27 已发布 https://youtu.be/QFufWWuYIzQ ；Shorts 11-27 已发布 https://youtube.com/shorts/pMvr-etf9OE 。
 - 11-27 已用 @JiayiBuildsTools 在 Shorts 下发了带 openolder.com 链接和完整视频链接的评论。
-- 下一步（只能 Jiayi 做）：置顶这条评论需要先验证频道的手机号（youtube.com/verify）；验证后在评论右边 ⋮ → Pin。验证手机号也会解锁自定义缩略图。
+- 11-28 决定（Jiayi）：暂不验证手机号，先不置顶，不影响发布。以后方便时去 youtube.com/verify 验证，再在评论 ⋮ → Pin；验证后也能传自定义缩略图。
 - 日期：2026-11-27 记录
 
 ### 5. 目录站收录
