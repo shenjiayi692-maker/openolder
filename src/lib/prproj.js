@@ -15,7 +15,7 @@
 //
 // Works in the browser and in Node. gzip via fflate.
 
-import { gunzipSync, gzipSync, strFromU8, strToU8 } from 'fflate';
+import { gunzipSync, gzipSync, strFromU8, strToU8, Gunzip, Gzip } from 'fflate';
 
 // Release -> XML <Project> Version (prem-down releases.go).
 export const RELEASES = [
@@ -201,8 +201,101 @@ export function decodeProject(bytes) {
 }
 
 /** Inspect a project without converting it. */
+// Large projects: a 40 MB .prproj inflates to ~600 MB of XML, more than a JavaScript string can hold
+// (~512 MB) and more than a browser tab can comfortably copy. Reading the version only needs the
+// first few kilobytes, and a version-only change (e.g. 27 -> 2026, 2025 -> 2024) can be streamed.
+const CHUNK = 1 << 20;
+const HEAD_BYTES = 1 << 16;
+const isGz = (b) => b.length >= 2 && b[0] === 0x1f && b[1] === 0x8b;
+const utf8 = (u8) => new TextDecoder('utf-8').decode(u8);
+const concat = (a, b) => { const o = new Uint8Array(a.length + b.length); o.set(a); o.set(b, a.length); return o; };
+function indexOfBytes(hay, pat, from) {
+  outer: for (let i = from; i <= hay.length - pat.length; i++) {
+    for (let j = 0; j < pat.length; j++) if (hay[i + j] !== pat[j]) continue outer;
+    return i;
+  }
+  return -1;
+}
+function countBytes(hay, pat, from) { let n = 0; for (let i = indexOfBytes(hay, pat, from); i >= 0; i = indexOfBytes(hay, pat, i + 1)) n++; return n; }
+const PROJECT_TAG = strToU8('<Project ObjectID="1"');
+
+/** First ~64 KB of the project XML, without inflating the whole file. */
+export function projectHead(bytes, max = HEAD_BYTES) {
+  if (!isGz(bytes)) return utf8(bytes.subarray(0, max));
+  let head = new Uint8Array(0);
+  let enough = false;
+  const g = new Gunzip((chunk) => { if (!enough) { head = concat(head, chunk); if (head.length >= max) enough = true; } });
+  try {
+    // never mark the last chunk final here: we only need the head, and a damaged tail should not hide it
+    for (let i = 0; i < bytes.length && !enough; i += CHUNK) g.push(bytes.subarray(i, i + CHUNK), false);
+    if (!enough) g.push(new Uint8Array(0), true); // read the whole (small) file: a truncated or broken stream raises its error
+  } catch (_) {
+    throw new DowngradeError('gzip', 'This file is damaged and could not be decompressed.');
+  }
+  if (!head.length) throw new DowngradeError('gzip', 'This file is damaged and could not be decompressed.');
+  return utf8(head.subarray(0, max));
+}
+
+/** Change only the project version, streaming: never holds the whole XML in memory. */
+function regateStream(bytes, target) {
+  const out = [];
+  const z = new Gzip({ level: 6 }, (c) => out.push(c));
+  let head = new Uint8Array(0);
+  let patched = false;
+  let count = 0;
+  let carry = new Uint8Array(0);
+  const handle = (chunk, final) => {
+    if (!patched) {
+      head = concat(head, chunk);
+      const s = indexOfBytes(head, PROJECT_TAG, 0);
+      const gt = s >= 0 ? head.indexOf(0x3e, s) : -1;
+      if (gt < 0) {
+        if (final || head.length > HEAD_BYTES) throw new DowngradeError('no-version', 'Could not find the project version in this file.');
+        return;
+      }
+      const tag = utf8(head.subarray(s, gt + 1));
+      const m = /\bVersion="(\d+)"/.exec(tag);
+      if (!m || tag.length !== gt + 1 - s) throw new DowngradeError('no-version', 'Could not find the project version in this file.');
+      const digits = String(target);
+      if (digits.length !== m[1].length) throw new DowngradeError('version-width', 'Unexpected version number width.');
+      const at = s + m.index + m[0].indexOf('"') + 1;
+      for (let i = 0; i < digits.length; i++) head[at + i] = digits.charCodeAt(i);
+      patched = true;
+      count = 1 + countBytes(head, PROJECT_TAG, gt + 1);
+      carry = head.subarray(Math.max(0, head.length - (PROJECT_TAG.length - 1)));
+      z.push(head, final);
+      head = null;
+      return;
+    }
+    const joined = concat(carry, chunk);
+    count += countBytes(joined, PROJECT_TAG, 0);
+    carry = joined.subarray(Math.max(0, joined.length - (PROJECT_TAG.length - 1)));
+    z.push(chunk, final);
+  };
+  if (isGz(bytes)) {
+    const g = new Gunzip((c, final) => handle(c, final));
+    try {
+      for (let i = 0; i < bytes.length; i += CHUNK) g.push(bytes.subarray(i, i + CHUNK), i + CHUNK >= bytes.length);
+    } catch (e) {
+      if (e instanceof DowngradeError) throw e;
+      throw new DowngradeError('gzip', 'This file is damaged and could not be decompressed.');
+    }
+  } else handle(bytes, true);
+  if (!patched) throw new DowngradeError('no-version', 'Could not find the project version in this file.');
+  if (count !== 1) throw new DowngradeError('version-count', `Expected exactly one <Project ObjectID="1"> tag, found ${count}.`);
+  let n = 0; for (const c of out) n += c.length;
+  const res = new Uint8Array(n); let o = 0; for (const c of out) { res.set(c, o); o += c.length; }
+  if (getProjectVersion(projectHead(res)) !== target) throw new DowngradeError('verify', 'Output version does not match the target.');
+  return res;
+}
+
+const tooLarge = (e) => e instanceof RangeError || /allocation|out of memory|Invalid string length|Invalid array length|encoded data was not valid/i.test(e?.message || '');
+// Uncompressed size from the gzip trailer (mod 4 GiB); a whole project above this cannot become one string.
+const MAX_XML_BYTES = 480e6;
+const inflatedSize = (b) => (isGz(b) && b.length >= 18 ? (b[b.length - 4] | (b[b.length - 3] << 8) | (b[b.length - 2] << 16) | (b[b.length - 1] << 24)) >>> 0 : b.length);
+
 export function inspect(bytes) {
-  const xml = decodeProject(bytes);
+  const xml = projectHead(bytes);
   if (!xml.includes('<PremiereData')) throw new DowngradeError('not-premiere', 'This does not look like a Premiere Pro project (.prproj).');
   const version = getProjectVersion(xml);
   return {
@@ -220,9 +313,9 @@ export function inspect(bytes) {
  * @returns {{bytes: Uint8Array, sourceVersion:number, targetVersion:number, inserted:Object, unrecognised:boolean}}
  */
 export function downgrade(bytes, targetVersion) {
-  let xml = decodeProject(bytes);
-  if (!xml.includes('<PremiereData')) throw new DowngradeError('not-premiere', 'This does not look like a Premiere Pro project (.prproj).');
-  const sourceVersion = getProjectVersion(xml);
+  const head = projectHead(bytes);
+  if (!head.includes('<PremiereData')) throw new DowngradeError('not-premiere', 'This does not look like a Premiere Pro project (.prproj).');
+  const sourceVersion = getProjectVersion(head);
   const unrecognised = sourceVersion > newestKnownVersion();
   let target = targetVersion;
   if (!target) {
@@ -233,11 +326,21 @@ export function downgrade(bytes, targetVersion) {
     throw new DowngradeError('not-older', `This project is already from Premiere ${releaseName(sourceVersion) ?? sourceVersion}. Pick an older version.`);
   }
   const reinsert = needsFieldReinsertion(sourceVersion, target);
-  let inserted = {};
-  if (reinsert) ({ xml, stats: inserted } = reconstruct(xml));
-  xml = setProjectVersion(xml, target);
-  verify(xml, target, reinsert);
-  return { bytes: gzipSync(strToU8(xml), { level: 9 }), sourceVersion, targetVersion: target, inserted, unrecognised };
+  if (!reinsert) return { bytes: regateStream(bytes, target), sourceVersion, targetVersion: target, inserted: {}, unrecognised };
+  const tooBig = () => new DowngradeError('too-large', `This project (${Math.round(bytes.length / 1e6)} MB) is too large to convert to Premiere ${releaseName(target) ?? target} in the browser: going below 2026 means rebuilding the whole project in memory. Premiere 27 to 2026 works at any size. For older versions, try a computer with more memory, or export the sequences as Final Cut Pro XML from the newer Premiere.`);
+  const size = inflatedSize(bytes);
+  if (size > MAX_XML_BYTES || (isGz(bytes) && size < bytes.length)) throw tooBig(); // size < compressed: the 4 GiB counter wrapped
+  try {
+    let xml = decodeProject(bytes);
+    let inserted = {};
+    ({ xml, stats: inserted } = reconstruct(xml));
+    xml = setProjectVersion(xml, target);
+    verify(xml, target, reinsert);
+    return { bytes: gzipSync(strToU8(xml), { level: 9 }), sourceVersion, targetVersion: target, inserted, unrecognised };
+  } catch (e) {
+    if (!tooLarge(e)) throw e;
+    throw tooBig();
+  }
 }
 
 // ---------------------------------------------------------------------------

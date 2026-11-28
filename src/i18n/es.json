@@ -55,7 +55,8 @@
       "These files contain more than one .prodset. Convert one Production at a time.": "Estos archivos contienen más de un .prodset. Convierte una sola Producción cada vez."
     },
     "untested": "Este proyecto se guardó con una versión de Premiere posterior a Premiere 27. Su conversión aún no se ha probado, así que el resultado podría no abrirse. Conserva el original. Si falla, escribe a hello@openolder.com: estamos añadiendo compatibilidad con la nueva versión.",
-    "sendFile": "Envíanos el archivo"
+    "sendFile": "Envíanos el archivo",
+    "crashed": "El conversor se detuvo, probablemente porque este proyecto es demasiado grande para la memoria disponible en esta pestaña. Cierra otras pestañas y vuelve a soltar el archivo; convertir a 2026 es lo que menos memoria necesita."
   },
   "pages": {
     "": {

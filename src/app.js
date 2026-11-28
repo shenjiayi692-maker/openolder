@@ -9,6 +9,7 @@
     converting: 'Converting…', doneProject: 'Done. Open the downloaded project in Premiere Pro {version}. Features that only exist in newer versions will not appear.',
     doneFiles: 'Done. Open the downloaded files in Premiere Pro {version}. Features that only exist in newer versions will not appear.',
     partial: ' {n} file(s) could not be converted: {names}.', errors: {}, sendFile: 'Email us the file',
+    crashed: 'The converter stopped, most likely because this project is too large for the memory available to this browser tab. Close other tabs and drop the file again; converting to 2026 needs the least memory.',
     untested: 'This project was saved by a Premiere release newer than Premiere 27. Converting it has not been tested yet, so the result may not open. Keep the original. If it fails, email hello@openolder.com: support for the new release is being added.',
   }, window.OPENOLDER_I18N || {});
   const t = (k, v) => MSG[k].replace(/\{(\w+)\}/g, (_, n) => v[n]);
@@ -19,10 +20,25 @@
   const RELEASES = [[38, '2020.1'], [39, '2021'], [40, '2022'], [41, '2023'], [42, '2024'], [43, '2025'], [45, '2026'], [46, '27']];
   const RELEASES_ALL = [[22, 'CS4'], [23, 'CS5'], [24, 'CS5.5'], [25, 'CS6'], [26, 'CC'], [27, '2014'], [28, '2014.1'], [29, '2015'], [30, '2015.1'], [32, '2017'], [33, '2018'], [34, '2018.1'], [35, '2019'], [36, '2019.1'], [37, '2020'], ...RELEASES];
 
-  const worker = new Worker('/worker.js', { type: 'module' });
   let reqId = 0; const pending = new Map(); let analysis = null;
-  worker.onmessage = (e) => { const p = pending.get(e.data.id); if (!p) return; pending.delete(e.data.id); e.data.ok ? p.resolve(e.data.result) : p.reject(new Error(e.data.error)); };
-  const call = (type, payload) => new Promise((resolve, reject) => { const id = ++reqId; pending.set(id, { resolve, reject }); worker.postMessage({ id, type, payload }); });
+  // The worker can crash on a huge project (out of memory). Fail the waiting request so the page
+  // does not hang, and start a fresh worker next time (the files have to be dropped again).
+  let worker = null;
+  const getWorker = () => {
+    if (worker) return worker;
+    worker = new Worker('/worker.js', { type: 'module' });
+    worker.onmessage = (e) => { const p = pending.get(e.data.id); if (!p) return; pending.delete(e.data.id); e.data.ok ? p.resolve(e.data.result) : p.reject(new Error(e.data.error)); };
+    worker.onerror = (e) => {
+      if (e && e.preventDefault) e.preventDefault();
+      try { worker.terminate(); } catch (_) { /* ignore */ }
+      worker = null; analysis = null;
+      const waiting = [...pending.values()]; pending.clear();
+      waiting.forEach((p) => p.reject(new Error(MSG.crashed)));
+      track('crash', 'worker');
+    };
+    return worker;
+  };
+  const call = (type, payload) => new Promise((resolve, reject) => { const id = ++reqId; pending.set(id, { resolve, reject }); getWorker().postMessage({ id, type, payload }); });
   const setStatus = (m, k) => { status.textContent = m; status.className = 'status ' + (k || ''); };
   // After an error, a mail link with a fixed subject tag so real reports stand out from sales email.
   const addReportLink = (detail) => {
@@ -132,7 +148,12 @@
       if (r.errors?.length) track('convert_fail', 'partial');
       setStatus(msg, r.errors?.length ? 'error' : 'ok');
       if (r.errors?.length) addReportLink(r.errors.map((e) => tErr(e.error || '')).join('; '));
-    } catch (err) { track('convert_fail', 'error'); setStatus(tErr(err.message), 'error'); addReportLink(err.message); } finally { btn.disabled = false; }
+    } catch (err) {
+      const kind = /too large/i.test(err.message) ? 'too_large' : err.message === MSG.crashed ? 'crash' : /damaged|decompress/i.test(err.message) ? 'damaged' : 'error';
+      track('convert_fail', kind);
+      if (!analysis) panel.hidden = true; // the worker restarted: the files must be dropped again
+      setStatus(tErr(err.message), 'error'); addReportLink(err.message);
+    } finally { btn.disabled = false; }
   }
 
   drop.addEventListener('click', (e) => { if (e.target.id !== 'pick-folder') input.click(); });

@@ -7,12 +7,10 @@
 
 ## 待办
 
-### 1. “不是工程文件”失败：看新的诊断记录
-- 证据：D1 统计，analyze_fail（not_project）共 6 次：11-22 首页 4 次，11-23 /project-could-not-be-loaded-damaged/ 页 2 次。
-- 状态：11-23 已加诊断（da7a28c），失败时会记扩展名、文件头和大小。
-- 下一步：攒到 10 条左右的新记录后，看用户传的主要是什么文件，再决定是改提示、补页面，还是支持新格式。
-- 推测（未证实）：手动改版本号的人常把 .prproj 解压成 XML、改完没压缩回去；工具目前会拒绝未压缩的 XML（11-23 本地测试确认会报 not_project）。如果新记录里多是 `not_project:prproj:xml:…`，就让工具直接接受未压缩的 XML（改动小）。
-- 日期：2026-11-24 记录
+### 1. 读取失败：剩下 zip 类失败待查
+- 证据（D1，11-24 至 11-27）：`analyze_fail` 里 `error:zip:zip` 5 次（首页 3、/pt/ 1、/premiere-2026-to-2025/ 1，其中 2 个大于 50 MB），说明用户传了 zip 但里面没找到 .prproj，或解压失败；另有 `error:mp4` 1 次、`error:prin` 1 次（传错文件）。`not_project:prproj:xml` 0 次，“用户传未压缩 XML”的推测目前没有证据。
+- 下一步：攒到 10 条 zip 失败后，看是否值得改提示（例如“zip 里要包含 .prproj 或整个 Production 文件夹”），或支持更大的 zip。
+- 日期：2026-11-28 更新
 
 ### 2. “工程可能已损坏”页：4 周后看效果
 - 状态：11-23 已在页面上加了从 Auto-Save 找回旧版本的步骤（da7a28c）。
@@ -25,6 +23,7 @@
 - 日期：2026-11-24 记录
 
 ## 最近完成
+- 2026-11-28 大项目修复：11-25 至 11-27 /premiere-27-to-2026/ 上 5 次“不是工程文件”（gzip、10 MB 以上）和 3 次转换出错，原因是大项目解压后超过浏览器字符串上限（约 5.4 亿字符，项目压缩率约 14 倍）。现在识别版本只解压开头；只改版本号的转换（27→2026 等）边解压边压缩，6 亿字符的模拟项目 27 秒转完；转到 2025 及更早仍要整体处理，太大时给出说明而不是报错；转换引擎崩溃时页面不再卡住。统计里转换失败细分为 too_large / crash / damaged / error，新增 crash 事件。
 - 2026-11-27 About 页加了一行“Other tools by the same developer: Find Shutter Count …”，链接 https://findshuttercount.com/（正常 follow 链接，带 title）。只此一处，单向（findshuttercount 不回链），不是站群互链。测试：npm test 27/27，smoke-browser 与 smoke-ableton failures: 0；Ableton 页没动。
 - 2026-11-24 决定（Jiayi）：暂不加 Google Analytics / Clarity（会用 Cookie，要改隐私页并征得欧盟用户同意）。访问量继续看 Cloudflare Web Analytics，工具使用看 D1。以后要加，连同隐私页和同意提示一起改。
 - 2026-11-24 工具下方新增“项目打不开或转换不了？告诉我们”，失败时也附“Email us the file”链接，主题带 `[OpenOlder feedback]`，4 种语言（2d80c4d）。

@@ -173,3 +173,18 @@ test('real Premiere 27 project (prem-down fixture): recognised, converts to 2026
   assert.ok(params.length > 0);
   for (const p of params) assert.ok(/<LowerBound>/.test(p) && /<UpperBound>/.test(p));
 });
+
+test('inspect reads only the head: a 27 project with a damaged tail still reports its version', () => {
+  const b = fx('fixture_ppro27.prproj').slice();
+  for (let i = b.length - 2000; i < b.length - 8; i++) b[i] ^= 0xff; // corrupt the end: a whole-file inflate would fail
+  assert.throws(() => gunzipSync(b));
+  const i = inspect(b);
+  assert.equal(i.version, 46);
+  assert.equal(i.release, '27');
+});
+
+test('version-only conversion (27 -> 2026) streams and gives the same XML as the in-memory path', () => {
+  const b = fx('fixture_ppro27.prproj');
+  const x = unzip(downgrade(b, 45).bytes);
+  assert.equal(x, setProjectVersion(unzip(b), 45));
+});
